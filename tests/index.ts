@@ -3,6 +3,7 @@ import * as assert from "assert";
 import {SmokeTest} from "../dist";
 
 // specify to get code from dist, or else it won't run for your tests
+// hello
 
 describe("index",()=>{
     it("should say 'hello world'",()=> {

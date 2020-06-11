@@ -13,6 +13,7 @@
     var assert = require("assert");
     var dist_1 = require("../dist");
     // specify to get code from dist, or else it won't run for your tests
+    // hello
     describe("index", function () {
         it("should say 'hello world'", function () {
             dist_1.SmokeTest.HelloWorld();
