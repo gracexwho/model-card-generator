@@ -9,6 +9,7 @@
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.SmokeTest = void 0;
     var SmokeTest;
     (function (SmokeTest) {
         function HelloWorld() {
@@ -16,5 +17,15 @@
         }
         SmokeTest.HelloWorld = HelloWorld;
     })(SmokeTest = exports.SmokeTest || (exports.SmokeTest = {}));
+    var Logger = /** @class */ (function () {
+        function Logger() {
+        }
+        Logger.prototype.log = function (message) {
+            console.log(message);
+        };
+        return Logger;
+    }());
+    var logger = new Logger();
+    logger.log("hello world");
 });
 //# sourceMappingURL=index.js.map
