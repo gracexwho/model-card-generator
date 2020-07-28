@@ -1,6 +1,6 @@
 // TO DO
 // Parse model name
-// get import + library descriptions
+// *** get import + library descriptions
 // Use Program-Builder to get Cell Data
 
 
@@ -19,7 +19,6 @@ var fs = require('fs');
 var args = process.argv.slice(2);
 var filename = args[0];
 var countLines = 0;
-
 
 
 
@@ -43,16 +42,18 @@ function readCode(filename) {
             notebookCode += sourceCode + '\n';
         }
     }
-    generateModelName(filename);
-    printLineDefUse(notebookCode);
+    return notebookCode;
 
 }
 
 function generateModelName(filename) {
     // either filename or first line of markdown cell
+    // parse from end to previous /
+    
     console.log("------------------MODEL CARD--------------------");
     console.log("## NOTEBOOK NAME ##")
-    console.log(filename);
+    console.log("File Name: ", filename);
+
 }
 
 
@@ -80,6 +81,7 @@ function printLineDefUse(code){
 
     }
     var n = countLines;
+    console.log();
     console.log("## NUMBER OF LINES OF CODE ##");
     console.log(n);
 
@@ -107,6 +109,7 @@ function findImportScope(importScope, lineToCode, numgraph) {
         //console.log("START: ", lineNum.toString(), " END: ", scopes[lineNum]);
         imports[lineToCode[lineNum]] = "START:" + lineNum.toString() + "\t" + " END:" + scopes[lineNum];
     }
+    console.log();
     generateLibraryInfo(imports);
 }
 
@@ -146,8 +149,9 @@ function generateLibraryInfo(imports) {
 
 
 
-readCode(filename);
-
+let notebookCode = readCode(filename);
+generateModelName(filename);
+printLineDefUse(notebookCode);
 
 
 
