@@ -16,15 +16,14 @@ class Graph {
         this.edge[a].push(b);
     }
 
-    storeDFS(node, adj, dp, visited, last_node, order) {
+    storeDFS(node, adj, dp, visited, last_node) {
         visited[node] = true;
-        order.push(node);
 
         var i;
         for (i = 0; i < adj[node].length; i++) {
             if (!visited[adj[node][i]]) {
-                last_node[node] = Math.max(last_node[node], adj[node][i]);
-                this.storeDFS(adj[node][i], adj, dp, visited, last_node, order);
+                last_node.push([node, adj[node][i]]);
+                this.storeDFS(adj[node][i], adj, dp, visited, last_node);
             }
             dp[node] = Math.max(dp[node], 1 + dp[adj[node][i]])
         }
@@ -32,26 +31,24 @@ class Graph {
     }
 
     findLongestPathSrc(n, src) {
-
         var adj = this.edge;
-
         var dp = new Array(n+1).fill(0);
         var visited = new Array(n+1).fill(false);
-        var last_node = new Array(n+1).fill(-1);
-        var order = [];
+        var last_node = [];
 
         var i;
-        for (i=0;i<=n;i++) {
-            last_node[i] = i;
-        }
 
-        this.storeDFS(src, adj, dp, visited, last_node, order);
+        this.storeDFS(src, adj, dp, visited, last_node);
         var ans = 0;
         for (i = 1; i <= n; i++) {
             ans = Math.max(ans, dp[i]);
         }
         // first one is total traversal length, second one is last node
-        return [last_node[src], order];
+        var max = last_node.reduce(function(a, b) {
+            return [0, Math.max(a[1], b[1])];
+        });
+
+        return [last_node, max[1]];
     }
 
 
@@ -60,7 +57,7 @@ class Graph {
 
 // Now have to actually draw graph from visited nodes Order
 
-
+/**
 
 var n = 5;
 var graph = new Graph(n);
@@ -72,7 +69,12 @@ graph.addEdge( 2, 4);
 graph.addEdge( 3, 4);
 graph.addEdge(4,5);
 console.log(graph.edge);
-console.log("Last node visited: ", graph.findLongestPathSrc(5, 2));
+answer = graph.findLongestPathSrc(5, 1);
+console.log("Order visited: ", answer[0]);
+console.log("Max node visited: ", answer[1])
+
+
+ **/
 
 
 module.exports = {
