@@ -1,0 +1,23 @@
+{
+  "numpy" : {
+    "description": "Library numerical computation and N-dimensional arrays, mostly used in preprocessing."
+  },
+  "pandas" : {
+    "description": "Library for data analysis and manipulation, mostly used in preprocessing to create dataframes."
+  },
+  "matplotlib": {
+    "description": "Library to create visualizations of data, mostly used for graphing."
+  },
+  "sklearn": {
+    "description": "Machine learning framework, built on NumPy, mostly used for model training and evaluation."
+  },
+  "tensorflow": {
+    "description": "Machine learning framework based on tensors, mostly used for model training and evaluation."
+  },
+  "pytorch": {
+    "description": "Machine learning frameork based on tensors, mostly used for model trainng and evaluation."
+  },
+  "OTHER": {
+    "description": ""
+  }
+}
