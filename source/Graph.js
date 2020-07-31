@@ -18,7 +18,6 @@ class Graph {
 
     storeDFS(node, adj, dp, visited, last_node) {
         visited[node] = true;
-
         var i;
         for (i = 0; i < adj[node].length; i++) {
             if (!visited[adj[node][i]]) {
