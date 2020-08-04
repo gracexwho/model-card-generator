@@ -56,7 +56,7 @@ class ModelCard {
 
 
 function createCell(text, executionCount, output) {
-    return new tc.TestCell(text, executionCount, output || "");
+    return new tc.TestCell(text, executionCount, output);
 }
 
 function readCells(filename) {
@@ -100,8 +100,9 @@ function readCells(filename) {
                 sourceCode += line;
             }
 
-            let code_cell = createCell(sourceCode, cell['execution_count'], cell['output']);
-            console.log(tc.printTestCell(code_cell));
+            let code_cell = createCell(sourceCode, cell['execution_count'], cell['outputs']);
+            //console.log(tc.printTestCell(code_cell));
+            //console.log("OUTPUT : ", cell["outputs"]);
             programbuilder.add(code_cell)
             model_card.JSONSchema[currStage]["cells"].push(code_cell);
             model_card.JSONSchema[currStage]["source"] += sourceCode;
@@ -204,7 +205,7 @@ function printLineDefUse(code, model_card){
         lineToCode[flow.toNode.location.last_line] = toNode[toNode.length-1];
         lineToCode[flow.toNode.location.first_line] = toNode[0];
 
-        if (flow.fromNode.type == "from" || flow.fromNode.type == "import") {
+        if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
             importScope[flow.fromNode.location.first_line] = -1;
         }
         //g.setEdge(flow.fromNode.location.first_line.toString(), flow.toNode.location.first_line.toString());
@@ -286,6 +287,14 @@ function generateLibraryInfo(imports) {
 
 }
 
+function printCellsOfStage(stage_name, model_card) {
+    //console.log(model_card.JSONSchema[stage_name]["cells"]);
+    for (let cell of model_card.JSONSchema[stage_name]["cells"]) {
+        console.log(cell);
+    }
+
+}
+
 
 function getOutput() {
     // look at "output_type" of json"
@@ -309,6 +318,7 @@ generateModelName(notebookMarkdown);
 //printLineDefUse(notebookCode, model_card);
 //printModelCard(model_card);
 
+printCellsOfStage("modelevaluation", model_card);
 
 
 
