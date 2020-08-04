@@ -184,9 +184,7 @@ function generateModelName(notebookMarkdown) {
 
 }
 
-function printModelCard(model_card) {
-    console.log(model_card.JSONSchema);
-}
+
 
 function printLineDefUse(code, model_card){
     let tree = py.parse(code);
@@ -288,23 +286,23 @@ function generateLibraryInfo(imports) {
 }
 
 function printCellsOfStage(stage_name, model_card) {
-    //console.log(model_card.JSONSchema[stage_name]["cells"]);
     for (let cell of model_card.JSONSchema[stage_name]["cells"]) {
         console.log(cell);
     }
-
 }
-
 
 function getOutput() {
     // look at "output_type" of json"
-    const TestCell = require("../../python-program-analysis/dist/es5/testcell");
     var hello = new TestCell(text, executionCount, executionEventId);
 }
 
+function printModelCard(model_card) {
+    console.log(model_card.JSONSchema);
+}
 
-function writeMarkdown() {
 
+function generateMarkdown(model_card) {
+    // TO DO
 }
 
 
@@ -315,8 +313,8 @@ let notebookCode = res[0];
 let notebookMarkdown = res[1];
 let model_card = res[2];
 generateModelName(notebookMarkdown);
-//printLineDefUse(notebookCode, model_card);
-//printModelCard(model_card);
+printLineDefUse(notebookCode, model_card);
+printModelCard(model_card);
 
 printCellsOfStage("modelevaluation", model_card);
 
