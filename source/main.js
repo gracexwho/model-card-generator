@@ -27,18 +27,18 @@ class ModelCard {
             authorinfo:{title:"Author Info"},
             dataset: {title: "Dataset", description:"", link:""},
             references: {title:"References"},
-            other:{title:"Other", cells:[], lineNumbers:[], source:"", imports:[], functions:"", figures:"", description:""},
-            datacleaning:{title:"Data Cleaning", cells:[], lineNumbers:[], source:"", imports:[], functions:"", figures:"", description:""},
-            preprocessing:{title:"Preprocessing", cells:[], lineNumbers:[], source:"", imports:[], functions:"", figures:"", description:""},
-            hyperparameters:{title:"Hyperparameters", cells:[], lineNumbers:[], source:"", values:""},
-            modeltraining:{title:"Model Training", cells:[], lineNumbers:[], source:"", imports:[], functions:"", figures:"", description:""},
-            modelevaluation:{title:"Evaluation", cells:[], lineNumbers:[], source:"", imports:[], functions:"", figures:"", description:""}};
+            pre:{title:"Pre", markdown:""},
+            other:{title:"Other", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+            datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+            preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+            hyperparameters:{title:"Hyperparameters", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", values:""},
+            modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}};
     }
 
     getStageLineNumbers(stage_name) {
         return this.JSONSchema[stage_name]["lineNumbers"];
     }
-
     getDCLineNumbers() {
         return this.JSONSchema["datacleaning"]["lineNumbers"];
     }
@@ -60,38 +60,64 @@ function createCell(text, executionCount, output) {
 }
 
 function readCells(filename) {
-    let programbuilder = new py.ProgramBuilder();
     var contents = fs.readFileSync(filename.toString());
     let jsondata = JSON.parse(contents);
     var notebookCode = "\n";
     var notebookMarkdown = "\n";
     const rewriter = new py.MagicsRewriter();
-    var currStage = "other";
-    let id_count = 1;
+    var currStage = "pre";
+    var model_card = new ModelCard();
+    let id_count = -1;
+    let programbuilder = new py.ProgramBuilder();
     // Added Manual labels # Data Cleaning, # Preprocessing, # Model Training, # Model Evaluation
+
     for (let cell of jsondata['cells']) {
         let sourceCode = "";
+        if (cell['cell_type'] === 'markdown') {
+            model_card.JSONSchema[currStage]["markdown"] += cell['source'];
 
-        if (cell['cell_type'] == 'markdown') {
-            // no output
-            //programbuilder.add(createCell(cell['source'], 0, cell['output']));
         } else {
+            // it's code
+            id_count += 1;
+            if (cell['source'][0].includes("Data Cleaning")) {
+                currStage = "datacleaning";
+            } else if (cell['source'][0].includes("Preprocessing")) {
+                currStage = "preprocessing";
+            }else if (cell['source'][0].includes("Model Training")) {
+                currStage = "modeltraining";
+            }else if (cell['source'][0].includes("Model Evaluation")) {
+                currStage = "modelevaluation";
+            } else {
+                currStage = "other";
+            }
+
             for (let line of cell['source']) {
-                //console.log("LINE: ", line, " COUNTLINES: ", countLines);
                 if (line[0] === "%") {
                     line = rewriter.rewriteLineMagic(line);
+                    countLines += 1;
+                    model_card.JSONSchema[currStage]["lineNumbers"].push(countLines);
                 }
                 sourceCode += line;
             }
-            programbuilder.add(createCell(sourceCode, cell['execution_count'], cell['output']))
+
+            let code_cell = createCell(sourceCode, cell['execution_count'], cell['output']);
+            console.log(tc.printTestCell(code_cell));
+            programbuilder.add(code_cell)
+            model_card.JSONSchema[currStage]["cells"].push(code_cell);
+            model_card.JSONSchema[currStage]["source"] += sourceCode;
+            model_card.JSONSchema[currStage]["cell_ids"].push(id_count);
         }
     }
-    let code = programbuilder.buildTo("id8").text;
-    console.log(code);
+    // id_count = persistentId
+    let code = programbuilder.buildTo("id" + id_count.toString()).text;
+
+    return [notebookCode, notebookMarkdown, model_card];
+
 }
 
 
 function readCode(filename) {
+    var countLines = 0;
     var contents = fs.readFileSync(filename.toString());
     let jsondata = JSON.parse(contents);
     var notebookCode = "\n";
@@ -113,7 +139,6 @@ function readCode(filename) {
             }else if (cell['source'][0].includes("Model Training")) {
                 currStage = "modeltraining";
 
-                
             }else if (cell['source'][0].includes("Model Evaluation")) {
                 currStage = "modelevaluation";
             }
@@ -143,6 +168,8 @@ function readCode(filename) {
     return [notebookCode, notebookMarkdown, model_card];
 
 }
+
+/////////////////////////////
 
 function generateModelName(notebookMarkdown) {
     // either filename or first line of markdown cell
@@ -273,13 +300,14 @@ function writeMarkdown() {
 
 
 
-let res = readCode(filename);
+//let res = readCode(filename);
+let res = readCells(filename);
 let notebookCode = res[0];
 let notebookMarkdown = res[1];
 let model_card = res[2];
 generateModelName(notebookMarkdown);
-printLineDefUse(notebookCode, model_card);
-printModelCard(model_card);
+//printLineDefUse(notebookCode, model_card);
+//printModelCard(model_card);
 
 
 
