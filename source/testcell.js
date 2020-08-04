@@ -11,7 +11,7 @@ var TestCell = /** @class */ (function () {
         //this.executionEventId = executionEventId || genid();
         this.executionEventId = currid;
         this.persistentId = persistentId || currid;
-        this.output = output || "";
+        this.output = output || {};
     }
     TestCell.prototype.deepCopy = function () { return this; }; // not used for testing
     return TestCell;
