@@ -33,7 +33,7 @@ class ModelCard {
             preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
             hyperparameters:{title:"Hyperparameters", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", values:""},
             modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
-            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}};
+            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}}
     }
 
     getStageLineNumbers(stage_name) {
@@ -303,6 +303,32 @@ function printModelCard(model_card) {
 
 function generateMarkdown(model_card) {
     // TO DO
+    let markdown_contents = "";
+
+    //markdown_contents = markdown_contents + "## " + entry.title + " ##" + "\n" + "\n";
+    //markdown_contents = markdown_contents;
+
+    var keys = Object.keys( model_card.JSONSchema );
+    for( var i = 0,length = keys.length; i < length; i++ ) {
+        console.log(model_card.JSONSchema[ keys[ i ] ]);
+    }
+
+    /**
+     *
+     *
+     *modelname:{title:""},
+     authorinfo:{title:"Author Info"},
+     dataset: {title: "Dataset", description:"", link:""},
+     references: {title:"References"},
+     pre:{title:"Pre", markdown:""},
+     other:{title:"Other", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+     datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+     preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+     hyperparameters:{title:"Hyperparameters", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", values:""},
+     modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
+     modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}};
+     */
+
 }
 
 
@@ -313,11 +339,12 @@ let notebookCode = res[0];
 let notebookMarkdown = res[1];
 let model_card = res[2];
 generateModelName(notebookMarkdown);
-printLineDefUse(notebookCode, model_card);
-printModelCard(model_card);
+//printLineDefUse(notebookCode, model_card);
+//printModelCard(model_card);
 
-printCellsOfStage("modelevaluation", model_card);
+//printCellsOfStage("modelevaluation", model_card);
 
+generateMarkdown(model_card);
 
 
 
