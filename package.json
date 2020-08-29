@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@andrewhead/python-program-analysis": "^0.4.8",
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.0.23",
     "mocha": "^8.0.1",
@@ -17,7 +18,8 @@
   },
   "dependencies": {
     "dagre": "^0.8.5",
-    "dagre-d3": "^0.6.4"
+    "dagre-d3": "^0.6.4",
+    "json2md": "^1.7.1"
   },
   "directories": {
     "test": "tests"
