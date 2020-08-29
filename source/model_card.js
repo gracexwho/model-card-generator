@@ -16,10 +16,12 @@ var fs = require('fs');
 var tc = require("./testcell");
 const json2md = require("json2md")
 
-
 var args = process.argv.slice(2);
 var filename = args[0];
 var countLines = 0;
+
+let markdown_contents = "";
+
 
 class ModelCard {
     constructor() {
@@ -28,14 +30,15 @@ class ModelCard {
             authorinfo:{title:"Author Info"},
             dataset: {title: "Dataset", description:"", link:""},
             references: {title:"References"},
+            libraries:{title:"Libraries Used"},
             pre:{title:"Pre", markdown:""},
             other:{title:"Other", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
             datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
             preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
             hyperparameters:{title:"Hyperparameters", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", values:""},
             modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
-            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}},
-            libraries:{title:"Libraries Used"}
+            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}
+        }
     }
 
     getStageLineNumbers(stage_name) {
@@ -253,6 +256,7 @@ function findImportScope(importScope, lineToCode, numgraph, model_card) {
 function generateLibraryInfo(imports) {
     let library_defs = JSON.parse(fs.readFileSync("library_defs.json"));
     console.log("## Libraries Used ##");
+    markdown_contents += "## Libraries Used ##" + "\n";
     var libraries = {"pandas":[], "numpy":[], "matplotlib":[], "sklearn":[], "tensorflow":[], "pytorch":[], "OTHER":[]};
 
     for (let im of Object.keys(imports)) {
@@ -276,10 +280,13 @@ function generateLibraryInfo(imports) {
     for (let lib of Object.keys(libraries)) {
         if (libraries[lib].length > 0) {
             console.log("### From the library ", lib, " ###");
-            model_card.JSONSchema[""]
             console.log(library_defs[lib]["description"]);
-            libraries[lib].forEach(element => console.log(element, "\t", imports[element]));
-            console.log("--");
+            markdown_contents += "#### From the library " + lib + " ####" + "\n";
+            for (let element of libraries[lib]) {
+                markdown_contents += element + "    " + imports[element] + "\n" + "\n";
+            }
+            //libraries[lib].forEach(element => console.log(element, "\t", imports[element]));
+            //console.log("--");
         }
     }
 
@@ -302,9 +309,9 @@ function printModelCard(model_card) {
 }
 
 
-function generateMarkdown(model_card, notebookCode) {
+function generateMarkdown(model_card) {
     // TO DO
-    let markdown_contents = "";
+
     //printLineDefUse(notebookCode, model_card);
     //markdown_contents = markdown_contents + "## " + entry.title + " ##" + "\n" + "\n";
     //markdown_contents = markdown_contents;
@@ -312,27 +319,34 @@ function generateMarkdown(model_card, notebookCode) {
 
     var keys = Object.keys( model_card.JSONSchema );
     for( var i = 0,length = keys.length; i < length; i++ ) {
-        var stageKeys = Object.keys(model_card.JSONSchema[keys[i]]);
-        for (let stageKey of stageKeys) {
-            if (stageKey == 'title') {
-                markdown_contents += "## " + model_card.JSONSchema[keys[i]][stageKey] + " ##" + "\n";
-            } else {
-                if (stageKey == 'source') {
-                    markdown_contents += "## " + stageKey + " ##" + "\n";
-                    markdown_contents += "``` " + "\n" + model_card.JSONSchema[keys[i]][stageKey] + "\n" + " ```" + "\n";
-                } else if (stageKey == "imports") {
-                    markdown_contents += "## " + stageKey + " ##" + "\n";
-                    markdown_contents += "``` " + model_card.JSONSchema[keys[i]][stageKey].join("\n") + " ```" + "\n";
-
+        if (keys[i] == 'libraries') {
+            console.log(keys[i]);
+            printLineDefUse(notebookCode, model_card)
+        } else {
+            var stageKeys = Object.keys(model_card.JSONSchema[keys[i]]);
+            for (let stageKey of stageKeys) {
+                if (stageKey == 'title') {
+                    markdown_contents += "## " + model_card.JSONSchema[keys[i]][stageKey] + " ##" + "\n";
                 } else {
-                    markdown_contents += "## " + stageKey + " ##" + "\n";
-                    markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
+                    if (stageKey == 'source') {
+                        markdown_contents += "### " + stageKey + " ###" + "\n";
+                        markdown_contents += "``` " + "\n" + model_card.JSONSchema[keys[i]][stageKey] + "\n" + " ```" + "\n";
+
+                    } else if (stageKey == "outputs") {
+                        markdown_contents += "### " + stageKey + " ###" + "\n";
+                        markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
+                        //var image = document.createElement('img');
+                        //image.src = "data:image/png;base64," + base64JsonData;
+                    } else if (stageKey == "imports" || stageKey == "markdown") {
+                        continue;
+                    } else {
+                        markdown_contents += "### " + stageKey + " ###" + "\n";
+                        markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
+                    }
                 }
-
-
             }
-
         }
+
 
     }
     fs.writeFile('ModelCard.md', markdown_contents, (err) => {
@@ -366,12 +380,13 @@ let notebookCode = res[0];
 let notebookMarkdown = res[1];
 let model_card = res[2];
 generateModelName(notebookMarkdown);
-printLineDefUse(notebookCode, model_card);
+//var imports = ;
+
 //printModelCard(model_card);
 
 printCellsOfStage("modelevaluation", model_card);
 
-generateMarkdown(model_card, notebookCode);
+generateMarkdown(model_card);
 
 
 
