@@ -17,14 +17,8 @@ var countLines = 0;
 let markdown_contents = "";
 
 
-
-async function main() {
-    /**
-     * Execute simple shell command (async wrapper).
-     * @param {String} cmd
-     * @return {Object} { stdout: String, stderr: String }
-     */
-    async function sh(cmd) {
+function analyze_notebooks() {
+    function sh(cmd) {
         return new Promise(function (resolve, reject) {
             child.exec(cmd, (err, stdout, stderr) => {
                 if (err) {
@@ -36,9 +30,21 @@ async function main() {
         });
     }
 
-    let { stdout } = await sh('node analyze_notebooks ' + '../assets/');
-    console.log("STDOUT:", stdout);
+    sh('node analyze_notebooks ' + '../assets/').then(
+        function(result) {
+            console.log(result['stdout']); // "initResolve"
+            graphvisual();
+            return "normalReturn";
+        }
+    )
+        .catch(function(result) {
+            console.log(result);
+            return;
+        })
 
+}
+
+function graphvisual() {
     let {PythonShell} = require('python-shell');
     let options = {
         mode: 'text',
@@ -48,15 +54,48 @@ async function main() {
         args: ['../assets/News_Categorization_MNB_deps_and_labels_new.txt']
     };
 
-    PythonShell.run('graph_visual-4.py', options, function (err, results) {
-        if (err) throw err;
-        console.log(results);
-    });
+    PythonShell.run('graph_visual-4.py', options,
+        function (err, results) {
+            if (err) throw err;
+            console.log(results);
+            convert_nb();
+        });
+}
 
-    // error where it doesn't realize _analysis.txt exists the first time it's called
-    stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
-    console.log("STDOUT", stdout);
+function convert_nb() {
+    function sh(cmd) {
+        return new Promise(function (resolve, reject) {
+            child.exec(cmd, (err, stdout, stderr) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ stdout, stderr });
+                }
+            });
+        });
+    }
 
+    sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt').then(
+        function(result) {
+            console.log(result['stdout']); // "initResolve"
+            return "normalReturn";
+        }
+    )
+        .catch(function(result) {
+            console.log(result);
+            return;
+        })
+}
+
+function main() {
+
+    analyze_notebooks();
+    //graphvisual();
+    //convert_nb();
+    //let { stdout } = await sh('node analyze_notebooks ' + '../assets/');
+    //console.log("STDOUT:", stdout);
+    //let stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
+    //console.log("STDOUT", stdout);
 }
 
 class ModelCard {
@@ -145,7 +184,7 @@ function readCells(filePath) {
                 //console.log("OUTPUT : ", cell["outputs"][0]['output_type']);
                 model_card.outputs[code_cell.persistentId] = cell["outputs"][0];
                 if (cell["outputs"][0]['output_type'] == 'display_data') {
-                    var bitmap = new Buffer(cell["outputs"][0]['data']['image/png'], 'base64');
+                    var bitmap = new Buffer.from(cell["outputs"][0]['data']['image/png'], 'base64');
                     fs.writeFileSync(__dirname + "/../example/" + code_cell.persistentId + ".jpg", bitmap);
                     var image = "![Hello World](data:image/png;base64," + cell["outputs"][0]['data']['image/png'];
                     //console.log(model_card.JSONSchema);
@@ -356,14 +395,14 @@ function generateMarkdown(model_card) {
 }
 
 
-//main();
+main();
 let res = readCells(filePath);
 let notebookCode = res[0];
 let notebookMarkdown = res[1];
 generateModelName(notebookMarkdown);
 
 
-printModelCard(model_card);
+//printModelCard(model_card);
 //Stage("datacleaning", model_card);
 
 //printCellsOfStage("preprocessing", model_card);
