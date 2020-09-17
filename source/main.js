@@ -24,7 +24,6 @@ async function main() {
      * @param {String} cmd
      * @return {Object} { stdout: String, stderr: String }
      */
-    console.log("MAIN");
     async function sh(cmd) {
         return new Promise(function (resolve, reject) {
             child.exec(cmd, (err, stdout, stderr) => {
@@ -46,14 +45,15 @@ async function main() {
         pythonPath: 'C:\\Program Files\\Python38\\python',
         pythonOptions: ['-u'], // get print results in real-time
         scriptPath: './',
-        args: ['../assets/']
+        args: ['../assets/News_Categorization_MNB_deps_and_labels_new.txt']
     };
 
-    /**PythonShell.run('graph_visual-4.py', options, function (err, results) {
+    PythonShell.run('graph_visual-4.py', options, function (err, results) {
         if (err) throw err;
+        console.log(results);
     });
 
-
+    /**
     // error where it doesn't realize _analysis.txt exists the first time it's called
     stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
     console.log(stdout['stdout']);
