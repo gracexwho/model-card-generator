@@ -2,15 +2,18 @@ from graphviz import Digraph
 import sys
 from collections import defaultdict
 import pylab
+import os
 
 print(sys.argv)
 name = sys.argv[1]
+notebookname = name.split(".txt")[0].split("/")
+notebookname = notebookname[len(notebookname)-1]
 #new_name = name.split(".")[1].split('/')[2] + "-4.gv"
-new_name = name.split(".")[0].split('_deps')[0] + ".gv"
+#new_name = name.split(".")[0].split('_deps')[0] + ".gv"
+new_name = notebookname.split('_deps')[0]
 
-g = Digraph('G', filename=new_name)
+g = Digraph('G', filename=new_name+'.gv')
 f = open(name, "r")
-
 
 def color_to_label(color):
     if(color == 'red'):
@@ -116,9 +119,10 @@ for cell in all_cells:
 
 
 # print the initial labels/titles for each cell in actual order
-#print('Currently processing: ' + name.split(".")[1].split('/')[2] + '.ipynb')    #this is if notebooks stored in /notebooks
-print('Currently processing: ' + name.split(".")[1] + '.ipynb')
-print(all_cells)
+
+print('Currently processing: ' + new_name + '.ipynb')    #this is if notebooks stored in /notebooks
+#print('Currently processing: ' + name.split(".")[1] + '.ipynb')
+#print(all_cells)
 print('\n\n\n')
 
 
@@ -155,7 +159,7 @@ worklist = set(sources)
 
 # a copy of all cells
 new_cells_list = [all_cells[i] for i in range(len(all_cells))]
-print(new_cells_list)
+#print(new_cells_list)
 
 # map from cell to which cells are merged to it
 merged = defaultdict(set)
@@ -163,8 +167,8 @@ merged = defaultdict(set)
 
 while(len(worklist) != 0):
     cur_cell = worklist.pop()
-    print('Currently processing')
-    print(cur_cell)
+    #print('Currently processing')
+    #print(cur_cell)
 
     # whether we want to keep this cell in the next round
     flag = True
@@ -195,7 +199,7 @@ while(len(worklist) != 0):
         worklist.add(child)
         continue
 
-        print('removed cell: ' + cur_cell)
+        #print('removed cell: ' + cur_cell)
     else:
 
         for child in dep_graph[cur_cell]:
@@ -230,7 +234,7 @@ while(len(worklist) != 0):
                 merged.pop(child)
                 merged[cur_cell] = new_merged
 
-                print('removed cell: ' + str(child))
+                #print('removed cell: ' + str(child))
             elif((len(parents[child])==1) and ((colors[cur_cell] == {'lightblue'}) or (colors[cur_cell] == {'lightgrey'}))):
 
                 colors[cur_cell] = (colors[cur_cell].union(colors[child]))
@@ -261,7 +265,7 @@ while(len(worklist) != 0):
                 merged.pop(child)
                 merged[cur_cell] = new_merged
 
-                print('removed cell: ' + str(child))
+                #print('removed cell: ' + str(child))
 
             # same color child merged to parent (both have one color/label)
             elif((len(parents[child])==1) and (len(colors[cur_cell]) == 1) and (len(colors[child]) == 1) and (colors[cur_cell] == colors[child])):
@@ -293,7 +297,7 @@ while(len(worklist) != 0):
                 merged.pop(child)
                 merged[cur_cell] = new_merged
 
-                print('removed cell: ' + str(child))
+                #print('removed cell: ' + str(child))
 
                 # print('removed cell: ' + str(child))
             elif((len(parents[child])==1) and (colors[cur_cell].symmetric_difference(colors[child]) == {'lightblue'})):
@@ -325,7 +329,7 @@ while(len(worklist) != 0):
                 merged.pop(child)
                 merged[cur_cell] = new_merged
 
-                print('removed cell: ' + str(child))
+                #print('removed cell: ' + str(child))
 
             elif((len(parents[child])==1) and ((colors[child].issubset(colors[cur_cell])) or (colors[cur_cell].issubset(colors[child])))):
 
@@ -356,7 +360,7 @@ while(len(worklist) != 0):
                 merged.pop(child)
                 merged[cur_cell] = new_merged
 
-                print('removed cell: ' + str(child))
+                #print('removed cell: ' + str(child))
 
             else:
                 flag = (flag and True)
@@ -399,7 +403,7 @@ def cmp_merged(x):
     return x_i
 
 
-print(new_cells_list)
+#print(new_cells_list)
 
 
 
@@ -470,8 +474,8 @@ for cell in new_cells_list:
 
 for trainings in parallel_trainings:
 
-    print('detect parallel training processes:')
-    print(trainings)
+    #print('detect parallel training processes:')
+    #print(trainings)
 
     for train_cell in trainings:
 
@@ -487,10 +491,10 @@ print()
 new_cells_list.sort(key = cmp_merged)
 
 
-print('merging')
-for cell in new_cells_list:
-    print(cell)
-    print(merged[cell])
+#print('merging')
+#for cell in new_cells_list:
+    #print(cell)
+    #print(merged[cell])
 
 
 
@@ -542,11 +546,11 @@ for tc in all_training_cells:
 i = 0
 while(i != (len(new_cells_list) - 1)):
 
-    print('cell ' + new_cells_list[i])
-    print(colors[new_cells_list[i]])
+    #print('cell ' + new_cells_list[i])
+    #print(colors[new_cells_list[i]])
 
-    print('next cell ' + new_cells_list[i+1])
-    print(colors[new_cells_list[i+1]])
+    #print('next cell ' + new_cells_list[i+1])
+    #print(colors[new_cells_list[i+1]])
 
 
     cur_merged_colors = set()
@@ -988,10 +992,15 @@ for i in range(len(new_cells_list)):
 
 print(final_output)
 
-print('original cells order:')
-print(all_cells)
+#print('original cells order:')
+#print(all_cells)
 
-file = open((name.split(".")[0].split('_deps')[0] + '_analysis.txt'), 'w')
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, '../assets/')
+
+print(name)
+file = open(filename + new_name + '_analysis.txt', 'w')
+#file = open((name.split(".")[0].split('_deps')[0] + '_analysis.txt'), 'w')
 #file = open((name.split(".")[1].split('/')[2].split('_deps')[0] + '_analysis.txt'), 'w')
 file.write(final_output)
 file.close()
@@ -1017,7 +1026,7 @@ for cell in cells:
 
 from graphviz import render
 g.format = 'svg'
-g.render()
+g.render(filename + new_name)
 #g.view()
 
 
