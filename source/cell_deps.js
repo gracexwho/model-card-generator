@@ -34,9 +34,11 @@ function printDependencies(cells, printMode, dict, name, res_color_map, sources,
     // }
     // res += cfg_count;
 
-    var new_name = '.' + name.split('.')[1];
+    var new_name = name.split('/');
+    new_name = new_name[new_name.length - 1].split(".ipynb")[0];
+    console.log("NEW NAME ", new_name);
 
-    fs.writeFile((new_name + '_deps_and_labels_new.txt'), res, function (err) {
+    fs.writeFile(__dirname + "/../assets/" + new_name + '_deps_and_labels_new.txt', res, function (err) {
       if (err) throw err;
       //console.log((new_name + '_deps_and_labels_new.txt') + ' saved!\n');
 

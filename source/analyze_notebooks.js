@@ -11,8 +11,6 @@ let notebookCount = 0;
 let notebookCount_with_multi_labels = 0;
 
 
-console.log("ANALYZE NOTEBOOKS");
-
 let cellCount = 0;
 
 
@@ -22,6 +20,7 @@ let map_nb_to_hashed_set = new Object();
 
 
 function getExt(filename){
+
     return filename.substring(filename.lastIndexOf('.')+1, filename.length);
 }
 
@@ -53,14 +52,13 @@ function hash(labels){
 }
 
 
-
 fs.readdirSync(path).forEach(file => {
 
     let flag = false;
 
     if (getExt(file) === "ipynb"){
         console.log('Currently processing:');
-        console.log(file + '\n');
+        console.log(path + file + '\n');
 
         // generating data flow graph information for current file
         dep.calculateCells(path + file, printMode);
@@ -68,7 +66,7 @@ fs.readdirSync(path).forEach(file => {
         let [processed, cell_count, map_from_cell_to_labels] = counting.calculateCells(path + file);
 
         map_nb_to_hashed_set[file] = new Set();
-        
+
 
         for (var key in map_from_cell_to_labels) {
 
@@ -90,6 +88,7 @@ fs.readdirSync(path).forEach(file => {
             }
         }
 
+
         for(let comb of map_nb_to_hashed_set[file]){
 
             if(comb in map_labels_to_count_nb){
@@ -107,12 +106,11 @@ fs.readdirSync(path).forEach(file => {
 
         cellCount += cell_count;
     }
-    
+
 
     if(flag){
         notebookCount_with_multi_labels += 1;
     }
-
 });
 
 
@@ -205,4 +203,3 @@ for (let key in map_labels_to_count_nb){
     console.log('The number of notebooks with cell(s) having lables -- ' + labels_set + ' -- is: ' + nb_count);
     console.log('The percentage of such notebooks over all notebooks = ' + (nb_count/notebookCount*100) + '%\n');
 }
-
