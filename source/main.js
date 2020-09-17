@@ -53,11 +53,9 @@ async function main() {
         console.log(results);
     });
 
-    /**
     // error where it doesn't realize _analysis.txt exists the first time it's called
     stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
-    console.log(stdout['stdout']);
-     **/
+    console.log("STDOUT", stdout);
 
 }
 
