@@ -10,7 +10,9 @@ console.log("HERE : ", analysis);
 console.log("NAME ", analysis);
 const programSrc = fs.readFileSync(nb).toString();
 const programJson = JSON.parse(programSrc);
-var new_name = analysis.split('.')[0];
+
+var new_name = analysis.split(".txt")[0].split("_analysis")[0]
+//var new_name = analysis.split('.')[0];
 
 //console.log(programJson);
 
@@ -244,7 +246,7 @@ for(var i = 0; i < len; i++){
 
 programJson.cells = new_cells;
 
-fs.writeFile((new_name + '_clean.ipynb'), JSON.stringify(programJson), function (err) {
+fs.writeFile((__dirname + "/../assets/" + new_name + '_clean.ipynb'), JSON.stringify(programJson), function (err) {
     if (err) throw err;
     console.log('saved!');
 });
