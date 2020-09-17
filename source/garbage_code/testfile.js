@@ -1,5 +1,5 @@
-var py = require("../../python-program-analysis/dist/es5");
-var tc = require("./testcell");
+var py = require("../../../python-program-analysis/dist/es5");
+var tc = require("../testcell");
 var fs = require("fs");
 
 let filename = "News_Categorization_MNB.ipynb";

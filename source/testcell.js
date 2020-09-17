@@ -11,7 +11,8 @@ var TestCell = /** @class */ (function () {
         //this.executionEventId = executionEventId || genid();
         this.executionEventId = currid;
         this.persistentId = persistentId || currid;
-        this.output = output || {};
+        this.output = output;
+
     }
     TestCell.prototype.deepCopy = function () { return this; }; // not used for testing
     return TestCell;
@@ -23,7 +24,12 @@ function genid() {
 }
 
 function printTestCell(cell) {
-    let info = {"persistentId":cell.persistentId, "code":cell.text, "output":cell.output};
+    let info = {"persistentId":cell.persistentId, "code":cell.text};
+    try {
+        info["output"] = output.toJSON();
+    } catch {
+        info["output"] = "";
+    }
     return info
 }
 

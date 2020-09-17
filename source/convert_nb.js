@@ -6,9 +6,12 @@ const analysis = args[1]
 
 // let res = new Object();
 
-
+console.log("NAME ", analysis);
 const programSrc = fs.readFileSync(nb).toString();
 const programJson = JSON.parse(programSrc);
+var new_name = analysis.split('.')[0];
+
+//console.log(programJson);
 
 var prev_exe_cnt = -1
 
@@ -59,9 +62,6 @@ for(var i = (programJson.cells.length - 1); i >= 0; i--){
 
 const data = fs.readFileSync(analysis, {encoding:'utf8', flag:'r'});
 console.log(data);
-
-
-
 
 let new_cells = [];
 
@@ -118,25 +118,26 @@ let df_graph = new Object();
 df_graph['cell_type'] = 'markdown';
 df_graph['metadata'] = new Object();
 df_graph['source'] = [];
-df_graph['source'].push("![title](./image.png)");
+df_graph['source'].push("![title]" + "(./" + new_name.split("_analysis")[0] + ".gv.svg" + ")");
 new_cells.push(df_graph);
 
-
-
-
-
-
+console.log("DATA:", data);
 
 let sec_markdowns = [];
 let sec_cells = [];
 
-const sections = data.split(']\n');
+var sections = data.split("]\r\n");
+
+console.log("SECTIONS:", sections);
+
 sections.pop();
 
-for(const sec of sections){
+
+
+
+
+for(var sec of sections){
     const lines = sec.split('\n');
-
-
 
     var cells = lines.pop();
     cells = cells.split('[')[1]
@@ -231,7 +232,7 @@ for(var i = 0; i < len; i++){
     content += '\n\n\n';
 }
 
-var new_name = '.' + analysis.split('.')[1];
+
 // console.log(content);
 
 // fs.writeFile((new_name + '_clean.py'), content, function (err) {

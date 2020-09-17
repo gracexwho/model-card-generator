@@ -89,7 +89,6 @@ fs.readdirSync(path).forEach(file => {
             }
         }
 
-
         for(let comb of map_nb_to_hashed_set[file]){
 
             if(comb in map_labels_to_count_nb){
@@ -112,6 +111,7 @@ fs.readdirSync(path).forEach(file => {
     if(flag){
         notebookCount_with_multi_labels += 1;
     }
+
 });
 
 
