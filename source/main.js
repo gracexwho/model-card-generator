@@ -5,7 +5,7 @@ var py = require("../lib/python-program-analysis/dist/es5");
 var graphing = require("./Graph.js").Graph;
 var fs = require('fs');
 var path = require('path');
-var tc = require("./testcell");
+var ic = require("./infocell");
 var child = require('child_process');
 
 
@@ -98,7 +98,7 @@ var model_card = new ModelCard();
 
 
 function createCell(text, executionCount, output) {
-    return new tc.TestCell(text, executionCount, output);
+    return new ic.InfoCell(text, executionCount, output);
 }
 
 function readCells(filePath) {
@@ -139,7 +139,7 @@ function readCells(filePath) {
             }
             notebookCode += sourceCode + '\n';
             let code_cell = createCell(sourceCode, cell['execution_count'], cell['outputs'][0]);
-            //console.log(tc.printTestCell(code_cell));
+            //console.log(ic.printInfoCell(code_cell));
             //console.log("OUTPUT: ", cell["outputs"]);
             if (cell["outputs"].length != 0) {
                 //console.log("OUTPUT : ", cell["outputs"][0]['output_type']);
@@ -289,13 +289,13 @@ function generateLibraryInfo(imports) {
 
 function printCellsOfStage(stage_name, model_card) {
     for (let cell in model_card.JSONSchema[stage_name]["cells"]) {
-        console.log(tc.printTestCell(cell));
+        console.log(ic.printInfoCell(cell));
     }
 }
 
 function getOutput() {
     // look at "output_type" of json"
-    var hello = new TestCell(text, executionCount, executionEventId);
+    var hello = new InfoCell(text, executionCount, executionEventId);
 }
 
 function printModelCard(model_card) {
@@ -356,14 +356,14 @@ function generateMarkdown(model_card) {
 }
 
 
-main();
-//let res = readCells(filePath);
-//let notebookCode = res[0];
-//let notebookMarkdown = res[1];
-//generateModelName(notebookMarkdown);
-//var imports = ;
+//main();
+let res = readCells(filePath);
+let notebookCode = res[0];
+let notebookMarkdown = res[1];
+generateModelName(notebookMarkdown);
 
-//printModelCard(model_card);
+
+printModelCard(model_card);
 //Stage("datacleaning", model_card);
 
 //printCellsOfStage("preprocessing", model_card);

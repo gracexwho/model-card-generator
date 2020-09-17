@@ -13,7 +13,7 @@ var graphing = require("../Graph.js").Graph;
 var dagreD3 = require("dagre-d3");
 var d3 = require("d3");
 var fs = require('fs');
-var tc = require("../testcell");
+var tc = require("../infocell");
 const json2md = require("json2md")
 
 
