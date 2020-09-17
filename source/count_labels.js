@@ -7,7 +7,7 @@ module.exports = {
     calculateCells: function(name){
         const programSrc = fs.readFileSync(name).toString();
         const programJson = JSON.parse(programSrc);
-        
+
         let cell_count = 0;
 
         let map_from_cell_to_labels = new Object();
@@ -22,7 +22,7 @@ module.exports = {
         // relabel cells with no execution counts
         var last_exe_cnt = -1;
         for (let cell of programJson.cells){
-            
+
             if((cell.execution_count == null) && (cell.cell_type === 'code')){
                 cell.execution_count = last_exe_cnt + 1;
             }
@@ -47,7 +47,7 @@ module.exports = {
                 for(let line of cell.source){
 
                     if(!line.includes('import')){
-                    
+
                         if(line.includes('read_csv')){
                             map_from_cell_to_labels[cell.execution_count].add('data collection');
                         }
@@ -328,7 +328,7 @@ module.exports = {
                         else if(line.includes('TfidfTransformer')){
                             map_from_cell_to_labels[cell.execution_count].add('feature engineering');
                         }
-                    } 
+                    }
                 }
             }
         }
@@ -337,9 +337,9 @@ module.exports = {
         for (let cell of programJson.cells){
             let prev = '';
 
-            if((cell.execution_count in map_from_cell_to_labels) && (map_from_cell_to_labels[cell.execution_count].size == 2) 
+            if((cell.execution_count in map_from_cell_to_labels) && (map_from_cell_to_labels[cell.execution_count].size == 2)
                 && (map_from_cell_to_labels[cell.execution_count].has('training')) && (map_from_cell_to_labels[cell.execution_count].has('evaluation'))){
-                
+
                 console.log(cell.source);
 
                 for(let line of cell.source){
@@ -370,4 +370,3 @@ module.exports = {
         return [true, cell_count, map_from_cell_to_labels];
     }
 }
-
