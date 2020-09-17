@@ -1,10 +1,12 @@
 from graphviz import Digraph
 import sys
 from collections import defaultdict
+import pylab
 
+print(sys.argv)
 name = sys.argv[1]
-new_name = name.split(".")[1].split('/')[2] + "-4.gv"
-
+#new_name = name.split(".")[1].split('/')[2] + "-4.gv"
+new_name = name.split(".")[0].split('_deps')[0] + ".gv"
 
 g = Digraph('G', filename=new_name)
 f = open(name, "r")
@@ -114,7 +116,8 @@ for cell in all_cells:
 
 
 # print the initial labels/titles for each cell in actual order
-print('Currently processing: ' + name.split(".")[1].split('/')[2] + '.ipynb')
+#print('Currently processing: ' + name.split(".")[1].split('/')[2] + '.ipynb')    #this is if notebooks stored in /notebooks
+print('Currently processing: ' + name.split(".")[1] + '.ipynb')
 print(all_cells)
 print('\n\n\n')
 
@@ -988,7 +991,8 @@ print(final_output)
 print('original cells order:')
 print(all_cells)
 
-file = open((name.split(".")[1].split('/')[2].split('_deps')[0] + '_analysis.txt'), 'w')
+file = open((name.split(".")[0].split('_deps')[0] + '_analysis.txt'), 'w')
+#file = open((name.split(".")[1].split('/')[2].split('_deps')[0] + '_analysis.txt'), 'w')
 file.write(final_output)
 file.close()
 
@@ -1011,5 +1015,9 @@ for cell in cells:
             g.edge(cell, child)
             
 
-g.view()
+from graphviz import render
+g.format = 'svg'
+g.render()
+#g.view()
+
 

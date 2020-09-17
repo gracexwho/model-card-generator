@@ -4,7 +4,7 @@ exports.__esModule = true;
 var py = require("../dist/es5");
 var dagre = require("dagre");
 var Graph = require("graphlib").Graph;
-var graphing = require("./Graph.js").Graph;
+var graphing = require("../Graph.js").Graph;
 var dagreD3 = require("dagre-d3");
 var d3 = require("d3");
 
