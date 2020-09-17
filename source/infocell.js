@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TestCell = void 0;
-var TestCell = /** @class */ (function () {
-    function TestCell(text, executionCount, output, persistentId) {
+exports.InfoCell = void 0;
+var Infocell = /** @class */ (function () {
+    function InfoCell(text, executionCount, output, persistentId) {
         //if (hasError === void 0) { hasError = false; }
         let currid = genid();
         this.text = text;
@@ -14,8 +14,8 @@ var TestCell = /** @class */ (function () {
         this.output = output;
 
     }
-    TestCell.prototype.deepCopy = function () { return this; }; // not used for testing
-    return TestCell;
+    InfoCell.prototype.deepCopy = function () { return this; }; // not used for Infoing
+    return InfoCell;
 }());
 
 var ID = 0;
@@ -23,7 +23,7 @@ function genid() {
     return 'id' + (ID++);
 }
 
-function printTestCell(cell) {
+function printInfoCell(cell) {
     let info = {"persistentId":cell.persistentId, "code":cell.text};
     try {
         info["output"] = output.toJSON();
@@ -33,7 +33,7 @@ function printTestCell(cell) {
     return info
 }
 
-exports.TestCell = TestCell;
-exports.printTestCell = printTestCell;
+exports.InfoCell = Infocell;
+exports.printInfoCell = printInfoCell;
 
-//# sourceMappingURL=testcell.js.map
+//# sourceMappingURL=infocell.js.map
