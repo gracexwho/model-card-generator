@@ -1,9 +1,10 @@
 var fs = require('fs');
+var path = require('path');
 
 const args = process.argv.slice(2);
 const nb = args[0];
 const analysis = args[1]
-
+console.log("HERE : ", analysis);
 // let res = new Object();
 
 console.log("NAME ", analysis);
@@ -60,7 +61,7 @@ for(var i = (programJson.cells.length - 1); i >= 0; i--){
 
 
 
-const data = fs.readFileSync(analysis, {encoding:'utf8', flag:'r'});
+const data = fs.readFileSync(path.resolve(__dirname, analysis), {encoding:'utf8', flag:'r'});
 console.log(data);
 
 let new_cells = [];

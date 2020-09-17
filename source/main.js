@@ -1,14 +1,16 @@
 "use strict";
 exports.__esModule = true;
-var py = require("../../python-program-analysis/dist/es5");
+
+var py = require("../lib/python-program-analysis/dist/es5");
 var graphing = require("./Graph.js").Graph;
 var fs = require('fs');
+var path = require('path');
 var tc = require("./testcell");
 var child = require('child_process');
 
 
 var args = process.argv.slice(2);
-var filename = args[0];
+var filePath = args[0];
 var labels = args[1];
 var countLines = 0;
 
@@ -22,6 +24,7 @@ async function main() {
      * @param {String} cmd
      * @return {Object} { stdout: String, stderr: String }
      */
+    console.log("MAIN");
     async function sh(cmd) {
         return new Promise(function (resolve, reject) {
             child.exec(cmd, (err, stdout, stderr) => {
@@ -34,8 +37,8 @@ async function main() {
         });
     }
 
-    let { stdout } = await sh('node analyze_notebooks ./');
-    console.log(stdout['stdout']);
+    let { stdout } = await sh('node analyze_notebooks ' + '../assets/');
+    console.log("STDOUT:", stdout);
 
     let {PythonShell} = require('python-shell');
     let options = {
@@ -43,17 +46,18 @@ async function main() {
         pythonPath: 'C:\\Program Files\\Python38\\python',
         pythonOptions: ['-u'], // get print results in real-time
         scriptPath: './',
-        args: ['News_Categorization_MNB_deps_and_labels_new.txt']
+        args: ['../assets/']
     };
 
-    PythonShell.run('graph_visual-4.py', options, function (err, results) {
+    /**PythonShell.run('graph_visual-4.py', options, function (err, results) {
         if (err) throw err;
     });
 
 
     // error where it doesn't realize _analysis.txt exists the first time it's called
-    stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.')[0] + '_analysis.txt');
+    stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
     console.log(stdout['stdout']);
+     **/
 
 }
 
@@ -99,8 +103,8 @@ function createCell(text, executionCount, output) {
     return new tc.TestCell(text, executionCount, output);
 }
 
-function readCells(filename) {
-    var contents = fs.readFileSync(filename.toString());
+function readCells(filePath) {
+    var contents = fs.readFileSync(path.resolve(__dirname, filePath));
     let jsondata = JSON.parse(contents);
     var notebookCode = "\n";
     var notebookMarkdown = "\n";
@@ -108,14 +112,13 @@ function readCells(filename) {
     var currStage = "pre";
     let id_count = -1;
     let programbuilder = new py.ProgramBuilder();
-    // Added Manual labels # Data Cleaning, # Preprocessing, # Model Training, # Model Evaluation
-    model_card.JSONSchema["modelname"]["Model_Name"] = filename;
+    model_card.JSONSchema["modelname"]["Model_Name"] = filePath;
 
     for (let cell of jsondata['cells']) {
         let sourceCode = "";
         if (cell['cell_type'] === 'markdown') {
             model_card.JSONSchema[currStage]["markdown"] += cell['source'];
-        } else {
+        } else if (cell['source'][0] != undefined){
             // it's code
             id_count += 1;
             if (cell['source'][0].includes("Data Cleaning")) {
@@ -145,7 +148,7 @@ function readCells(filename) {
                 model_card.outputs[code_cell.persistentId] = cell["outputs"][0];
                 if (cell["outputs"][0]['output_type'] == 'display_data') {
                     var bitmap = new Buffer(cell["outputs"][0]['data']['image/png'], 'base64');
-                    fs.writeFileSync("image/" + code_cell.persistentId + ".jpg", bitmap);
+                    fs.writeFileSync(__dirname + "/../example/" + code_cell.persistentId + ".jpg", bitmap);
                     var image = "![Hello World](data:image/png;base64," + cell["outputs"][0]['data']['image/png'];
                     //console.log(model_card.JSONSchema);
                     model_card.JSONSchema[currStage]["figures"] += image;
@@ -174,7 +177,7 @@ function generateModelName(notebookMarkdown) {
 
     console.log("------------------MODEL CARD--------------------");
     console.log("## NOTEBOOK NAME ##")
-    console.log("File Name: ", filename);
+    console.log("File Name: ", filePath);
 
     console.log(notebookMarkdown);
 
@@ -248,7 +251,7 @@ function findImportScope(importScope, lineToCode, numgraph, model_card) {
 }
 
 function generateLibraryInfo(imports) {
-    let library_defs = JSON.parse(fs.readFileSync("library_defs.json"));
+    let library_defs = JSON.parse(fs.readFileSync(__dirname + "/../assets/library_defs.json"));
     //console.log("## Libraries Used ##");
     markdown_contents += "## Libraries Used ##" + "\n";
     var libraries = {"pandas":[], "numpy":[], "matplotlib":[], "sklearn":[], "tensorflow":[], "pytorch":[], "OTHER":[]};
@@ -352,30 +355,14 @@ function generateMarkdown(model_card) {
         console.log('Model card saved');
     });
 
-    /**
-     *
-     *
-     *modelname:{title:""},
-     authorinfo:{title:"Author Info"},
-     dataset: {title: "Dataset", description:"", link:""},
-     references: {title:"References"},
-     pre:{title:"Pre", markdown:""},
-     other:{title:"Other", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
-     datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
-     preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
-     hyperparameters:{title:"Hyperparameters", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", values:""},
-     modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
-     modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""}};
-     */
-
 }
 
 
 main();
-let res = readCells(filename);
-let notebookCode = res[0];
-let notebookMarkdown = res[1];
-generateModelName(notebookMarkdown);
+//let res = readCells(filePath);
+//let notebookCode = res[0];
+//let notebookMarkdown = res[1];
+//generateModelName(notebookMarkdown);
 //var imports = ;
 
 //printModelCard(model_card);
@@ -385,7 +372,7 @@ generateModelName(notebookMarkdown);
 //printCellsOfStage("modeltraining", model_card);
 //printCellsOfStage("modelevaluation", model_card);
 
-generateMarkdown(model_card);
+//generateMarkdown(model_card);
 
 
 
