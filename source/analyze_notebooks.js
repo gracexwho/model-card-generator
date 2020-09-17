@@ -1,5 +1,4 @@
 var dep = require("./cell_deps.js");
-var sk = require("./extract_sk_stmts.js");
 var counting = require("./count_labels.js");
 var fs = require('fs');
 
@@ -12,6 +11,8 @@ let notebookCount = 0;
 let notebookCount_with_multi_labels = 0;
 
 
+console.log("ANALYZE NOTEBOOKS");
+
 let cellCount = 0;
 
 
@@ -21,7 +22,6 @@ let map_nb_to_hashed_set = new Object();
 
 
 function getExt(filename){
-
     return filename.substring(filename.lastIndexOf('.')+1, filename.length);
 }
 
@@ -53,13 +53,14 @@ function hash(labels){
 }
 
 
+
 fs.readdirSync(path).forEach(file => {
 
     let flag = false;
 
     if (getExt(file) === "ipynb"){
         console.log('Currently processing:');
-        console.log(path + file + '\n');
+        console.log(file + '\n');
 
         // generating data flow graph information for current file
         dep.calculateCells(path + file, printMode);

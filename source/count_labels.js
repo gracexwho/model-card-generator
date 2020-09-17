@@ -1,6 +1,6 @@
 var fs = require('fs');
 var utils = require("./cell_utils.js");
-var py = require("../../python-program-analysis");
+var py = require("../lib/python-program-analysis/dist/es5");
 
 
 module.exports = {
