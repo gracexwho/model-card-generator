@@ -64,6 +64,7 @@ fs.readdirSync(path).forEach(file => {
         dep.calculateCells(path + file, printMode);
 
         let [processed, cell_count, map_from_cell_to_labels] = counting.calculateCells(path + file);
+        console.log("MAP: ", map_from_cell_to_labels);
 
         map_nb_to_hashed_set[file] = new Set();
 

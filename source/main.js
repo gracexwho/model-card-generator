@@ -1,12 +1,15 @@
 "use strict";
 exports.__esModule = true;
 
+// COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
+
 var py = require("../lib/python-program-analysis/dist/es5");
 var graphing = require("./Graph.js").Graph;
 var fs = require('fs');
 var path = require('path');
 var ic = require("./infocell");
 var child = require('child_process');
+var dep = require("./cell_deps.js");
 
 
 var args = process.argv.slice(2);
@@ -14,89 +17,10 @@ var filePath = args[0];
 var labels = args[1];
 var countLines = 0;
 
-let markdown_contents = "";
+var markdown_contents = "";
 
 
-function analyze_notebooks() {
-    function sh(cmd) {
-        return new Promise(function (resolve, reject) {
-            child.exec(cmd, (err, stdout, stderr) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve({ stdout, stderr });
-                }
-            });
-        });
-    }
 
-    sh('node analyze_notebooks ' + '../assets/').then(
-        function(result) {
-            console.log(result['stdout']); // "initResolve"
-            graphvisual();
-            return "normalReturn";
-        }
-    )
-        .catch(function(result) {
-            console.log(result);
-            return;
-        })
-
-}
-
-function graphvisual() {
-    let {PythonShell} = require('python-shell');
-    let options = {
-        mode: 'text',
-        pythonPath: 'C:\\Program Files\\Python38\\python',
-        pythonOptions: ['-u'], // get print results in real-time
-        scriptPath: './',
-        args: ['../assets/News_Categorization_MNB_deps_and_labels_new.txt']
-    };
-
-    PythonShell.run('graph_visual-4.py', options,
-        function (err, results) {
-            if (err) throw err;
-            console.log(results);
-            convert_nb();
-        });
-}
-
-function convert_nb() {
-    function sh(cmd) {
-        return new Promise(function (resolve, reject) {
-            child.exec(cmd, (err, stdout, stderr) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve({ stdout, stderr });
-                }
-            });
-        });
-    }
-
-    sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt').then(
-        function(result) {
-            console.log(result['stdout']); // "initResolve"
-            return "normalReturn";
-        }
-    )
-        .catch(function(result) {
-            console.log(result);
-            return;
-        })
-}
-
-function main() {
-
-    analyze_notebooks();
-    //graphvisual();
-    //convert_nb();
-    //let { stdout } = await sh('node analyze_notebooks ' + '../assets/');
-    //console.log("STDOUT:", stdout);
-    //let stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
-    //console.log("STDOUT", stdout);
-}
 
 class ModelCard {
     constructor() {
@@ -104,7 +28,7 @@ class ModelCard {
             modelname:{Model_Name:""},
             authorinfo:{title:"Author Info"},
             dataset: {title: "Dataset", description:"", link:""},
-            references: {title:"References"},
+            references: {title:"References", link:[]},
             libraries:{title:"Libraries Used"},
             pre:{title:"Pre", markdown:""},
             other:{title:"Other", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:""},
@@ -139,6 +63,9 @@ var model_card = new ModelCard();
 function createCell(text, executionCount, output) {
     return new ic.InfoCell(text, executionCount, output);
 }
+
+
+
 
 function readCells(filePath) {
     var contents = fs.readFileSync(path.resolve(__dirname, filePath));
@@ -211,10 +138,14 @@ function readCells(filePath) {
 
 
 function generateModelName(notebookMarkdown) {
+    var nbname = filePath.replace(/^.*[\\\/]/, '')
+    //console.log("------------------MODEL CARD--------------------");
+    //console.log("## NOTEBOOK NAME ##")
+    //console.log("File Name: ", nbname);
 
-    console.log("------------------MODEL CARD--------------------");
-    console.log("## NOTEBOOK NAME ##")
-    console.log("File Name: ", filePath);
+    var matches = notebookMarkdown.match(/\bhttps?:\/\/\S+/gi);
+    model_card.JSONSchema["modelname"]['Model_Name'] = nbname;
+    model_card.JSONSchema["references"]["link"] = matches;
 
     console.log(notebookMarkdown);
 
@@ -343,18 +274,11 @@ function printModelCard(model_card) {
 
 
 function generateMarkdown(model_card) {
-    // TO DO
-
-    //printLineDefUse(notebookCode, model_card);
-    //markdown_contents = markdown_contents + "## " + entry.title + " ##" + "\n" + "\n";
-    //markdown_contents = markdown_contents;
-   // console.log(model_card.JSONSchema);
 
     var keys = Object.keys( model_card.JSONSchema );
     for( var i = 0,length = keys.length; i < length; i++ ) {
         if (keys[i] == 'libraries') {
-            //console.log(keys[i]);
-            printLineDefUse(notebookCode, model_card)
+            printLineDefUse(notebookCode, model_card);
         } else {
             var stageKeys = Object.keys(model_card.JSONSchema[keys[i]]);
             for (let stageKey of stageKeys) {
@@ -395,21 +319,42 @@ function generateMarkdown(model_card) {
 }
 
 
+
+function main() {
+
+    //analyze_notebooks();      //Cindy's code
+    //convertColorToLabel(filePath);
+
+    var res = readCells(filePath);
+    var notebookCode = res[0];
+    var notebookMarkdown = res[1];
+    generateModelName(notebookMarkdown);
+    generateMarkdown(model_card);
+
+
+    //printModelCard(model_card);
+    //Stage("datacleaning", model_card);
+
+    //printCellsOfStage("preprocessing", model_card);
+    //printCellsOfStage("modeltraining", model_card);
+    //printCellsOfStage("modelevaluation", model_card);
+
+
+
+    //graphvisual();
+    //convert_nb();
+    //let { stdout } = await sh('node analyze_notebooks ' + '../assets/');
+    //console.log("STDOUT:", stdout);
+    //let stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
+    //console.log("STDOUT", stdout);
+}
+
+
 main();
-let res = readCells(filePath);
-let notebookCode = res[0];
-let notebookMarkdown = res[1];
-generateModelName(notebookMarkdown);
 
 
-//printModelCard(model_card);
-//Stage("datacleaning", model_card);
 
-//printCellsOfStage("preprocessing", model_card);
-//printCellsOfStage("modeltraining", model_card);
-//printCellsOfStage("modelevaluation", model_card);
 
-//generateMarkdown(model_card);
 
 
 
