@@ -121,7 +121,7 @@ let df_graph = new Object();
 df_graph['cell_type'] = 'markdown';
 df_graph['metadata'] = new Object();
 df_graph['source'] = [];
-df_graph['source'].push("![title]" + "(./" + new_name.split("_analysis")[0] + ".gv.svg" + ")");
+df_graph['source'].push("![title]" + "(./" + new_name.split("_analysis")[0] + ".svg" + ")");
 new_cells.push(df_graph);
 
 //console.log("DATA:", data);
