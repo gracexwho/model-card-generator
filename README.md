@@ -14,4 +14,4 @@ Typescript tool for generating Model Cards for machine learning models.
 ### Generate Cleaned Notebooks
 1. Navigate to the ```source``` directory
 2. Run ```node clean_notebook.js ../assets/```
-3. This should generate cleaned notebooks (notebooks separated into machine learning stages) and all analysis files
+This should generate cleaned notebooks (notebooks separated into machine learning stages) and all analysis files. All notebooks are currently stored in /assets/
