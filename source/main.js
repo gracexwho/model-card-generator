@@ -16,11 +16,7 @@ var args = process.argv.slice(2);
 var filePath = args[0];
 var labels = args[1];
 var countLines = 0;
-
 var markdown_contents = "";
-
-
-
 
 class ModelCard {
     constructor() {
