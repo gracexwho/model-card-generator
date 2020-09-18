@@ -4,7 +4,7 @@ var path = require('path');
 const args = process.argv.slice(2);
 const nb = args[0];
 const analysis = args[1]
-console.log("HERE : ", analysis);
+//console.log("HERE : ", analysis);
 // let res = new Object();
 
 console.log("NAME ", analysis);
@@ -64,7 +64,7 @@ for(var i = (programJson.cells.length - 1); i >= 0; i--){
 
 
 const data = fs.readFileSync(path.resolve(__dirname, analysis), {encoding:'utf8', flag:'r'});
-console.log(data);
+//console.log(data);
 
 let new_cells = [];
 
@@ -124,14 +124,14 @@ df_graph['source'] = [];
 df_graph['source'].push("![title]" + "(./" + new_name.split("_analysis")[0] + ".gv.svg" + ")");
 new_cells.push(df_graph);
 
-console.log("DATA:", data);
+//console.log("DATA:", data);
 
 let sec_markdowns = [];
 let sec_cells = [];
 
 var sections = data.split("]\r\n");
 
-console.log("SECTIONS:", sections);
+//console.log("SECTIONS:", sections);
 
 sections.pop();
 
@@ -207,7 +207,7 @@ for(var i = 0; i < len; i++){
         for(let cell of programJson.cells){
 
             if(cell.execution_count == cell_exe_count){
-                console.log(cell_exe_count);
+                //console.log(cell_exe_count);
 
                 if(cell.cell_type === 'code'){
                     for(let line of cell.source){
@@ -246,7 +246,8 @@ for(var i = 0; i < len; i++){
 
 programJson.cells = new_cells;
 
-fs.writeFile((__dirname + "/../assets/" + new_name + '_clean.ipynb'), JSON.stringify(programJson), function (err) {
+fs.writeFile((__dirname + "/../assets/" + new_name + '_clean.ipynb'), JSON.stringify(programJson),
+    function (err) {
     if (err) throw err;
     console.log('saved!');
 });

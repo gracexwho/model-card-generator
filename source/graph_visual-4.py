@@ -38,8 +38,8 @@ deps = []
 for line in f:
     deps.append(line)
 
-
 deps_count = int(deps[0])
+
 
 sources = (deps[-3]).strip().split(',')
 print('sources')

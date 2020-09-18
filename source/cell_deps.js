@@ -38,6 +38,8 @@ function printDependencies(cells, printMode, dict, name, res_color_map, sources,
     new_name = new_name[new_name.length - 1].split(".ipynb")[0];
     console.log("NEW NAME ", new_name);
 
+
+
     fs.writeFile(__dirname + "/../assets/" + new_name + '_deps_and_labels_new.txt', res, function (err) {
       if (err) throw err;
       //console.log((new_name + '_deps_and_labels_new.txt') + ' saved!\n');
