@@ -10,3 +10,6 @@ Typescript tool for generating Model Cards for machine learning models.
 ## Installation
 1. Clone the repository to your local folders
 2. run ```npm install``` to install node package dependencies
+
+### Generate Cleaned Notebooks
+1. 
