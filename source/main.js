@@ -318,9 +318,6 @@ function generateMarkdown(model_card) {
 
 function main() {
 
-    //analyze_notebooks();      //Cindy's code
-    //convertColorToLabel(filePath);
-
     var res = readCells(filePath);
     var notebookCode = res[0];
     var notebookMarkdown = res[1];
@@ -334,8 +331,6 @@ function main() {
     //printCellsOfStage("preprocessing", model_card);
     //printCellsOfStage("modeltraining", model_card);
     //printCellsOfStage("modelevaluation", model_card);
-
-
 
     //graphvisual();
     //convert_nb();
