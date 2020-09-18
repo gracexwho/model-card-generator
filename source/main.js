@@ -60,7 +60,33 @@ function createCell(text, executionCount, output) {
     return new ic.InfoCell(text, executionCount, output);
 }
 
+function convertColorToLabel(filePath) {
+    // data collection -> red
+    // data cleaning -> yellow
+    // data labeling -> green
+    // feature engineering -> lightblue
+    // training -> purple
+    // evaluation -> orange
+    // model deployment -> pink
 
+    var color_map = dep.printLabels(filePath);
+
+    //var colourFile = fs.readFileSync(path.resolve(__dirname, filePath.split(".ipynb")[0] + "_deps_and_labels_new.txt"), "utf8");
+    var mapObj = {red:"Data collection",yellow:"Data cleaning",
+        green:"Data labelling", "lightblue":"Plotting", "blue":"Feature Engineering",
+        Purple:"Training", Orange:"Evaluation", pink:"Model deployment"};
+
+    var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
+    color_map = color_map.replace(re, function(matched){
+        return mapObj[matched];
+    });
+
+    fs.writeFile((__dirname + "/../assets/" + filePath.split(".ipynb")[0] + '_labels.txt'), color_map,
+        function (err) {
+            if (err) throw err;
+            console.log('Labels file saved!');
+        });
+}
 
 
 function readCells(filePath) {
@@ -316,13 +342,18 @@ function generateMarkdown(model_card) {
 
 
 
+
+
 function main() {
+
+
 
     var res = readCells(filePath);
     var notebookCode = res[0];
     var notebookMarkdown = res[1];
-    generateModelName(notebookMarkdown);
-    generateMarkdown(model_card);
+    //generateModelName(notebookMarkdown);
+    //generateMarkdown(model_card);
+    convertColorToLabel(filePath);
 
 
     //printModelCard(model_card);
