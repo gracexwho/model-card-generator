@@ -5,7 +5,7 @@ Typescript tool for generating Model Cards for machine learning models.
 1. Make sure you have Python & pip & NodeJS installed
 2. pip install graphviz
 3. [Install GraphViz to your computer here](https://graphviz.org/download/)
-
+4. This repository builds on top of python-program-analysis, which is stored in ```lib```
 
 ## Installation
 1. Clone the repository to your local folders
