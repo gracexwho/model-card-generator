@@ -1,6 +1,6 @@
 var fs = require('fs');
 var utils = require("./cell_utils.js");
-var py = require("../../python-program-analysis");
+var py = require("../lib/python-program-analysis/dist/es5");
 
 
 module.exports = {
@@ -59,11 +59,11 @@ module.exports = {
         console.log("\n\nThese are all of the scikit-learn statements:\n");
         console.log(all_sk_stmt + all_sk_children_stmt);
         var new_name = name.split('.')[1];
-        // console.log('new name = ' + new_name);
+        console.log('new name = ' + new_name);
 
         fs.writeFile(('.' + new_name + '_sk_stmts.txt'), all_sk_stmt + all_sk_children_stmt, function (err) {
           if (err) throw err;
-          // console.log('saved!');
+          console.log('saved!');
         });
     }
 }
