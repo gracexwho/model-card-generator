@@ -24,7 +24,7 @@ class ModelCard {
             modelname:{Model_Name:""},
             authorinfo:{title:"Author Info"},
             dataset: {title: "Dataset", description:"", link:""},
-            references: {title:"References", link:[]},
+            references: {title:"References", links:[]},
             libraries:{title:"Libraries Used"},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
@@ -35,6 +35,7 @@ class ModelCard {
             modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]}
         }
         this.outputs = {};
+        this.markdown = [];
     }
 
     getStageLineNumbers(stage_name) {
@@ -113,19 +114,26 @@ function readCells2(filePath, new_color_map) {
     console.log();
     fs.mkdirSync("../example/" + model_card.JSONSchema["modelname"]["Model_Name"], { recursive: true })
 
+
+
     for (let cell of jsondata['cells']) {
         let sourceCode = "";
         if (cell['cell_type'] === 'markdown') {
             model_card.JSONSchema[currStage]["markdown"] += "\n" + cell['source'];
+            for (let mdline of cell['source']) {
+                var matches = mdline.match(/\bhttps?:\/\/[\S][^)]+/gi);
+                if (matches !== null) {
+                    console.log(matches);
+                    model_card.JSONSchema["references"]["links"] = model_card.JSONSchema["references"]["links"].concat(matches);
+                }
+            }
+
 
         } else if (cell['source'][0] != undefined){
             id_count += 1;
             var key = cell['execution_count'].toString();
-            console.log(key);
             if (key in new_color_map) {
                 var stage = new_color_map[key];
-                console.log(key);
-                console.log(stage);
                 if (stage == "Data collection" || stage == "Data cleaning" || stage == "Data labelling") {
                     currStage = "datacleaning";
                 } else if (stage == "Feature Engineering") {
@@ -247,22 +255,6 @@ function readCells(filePath) {
     return [notebookCode, notebookMarkdown, model_card];
 
 }
-
-
-function generateModelName(notebookMarkdown) {
-    var nbname = filePath.replace(/^.*[\\\/]/, '')
-    //console.log("------------------MODEL CARD--------------------");
-    //console.log("## NOTEBOOK NAME ##")
-    //console.log("File Name: ", nbname);
-
-    var matches = notebookMarkdown.match(/\bhttps?:\/\/\S+/gi);
-    model_card.JSONSchema["modelname"]['Model_Name'] = nbname;
-    model_card.JSONSchema["references"]["link"] = matches;
-
-    console.log(notebookMarkdown);
-
-}
-
 
 
 function printLineDefUse(code, model_card){
