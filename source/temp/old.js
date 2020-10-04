@@ -174,6 +174,75 @@ function readCode(filename) {
 
 }
 
+function readCells(filePath) {
+    var contents = fs.readFileSync(path.resolve(__dirname, filePath));
+    let jsondata = JSON.parse(contents);
+    var notebookCode = "\n";
+    var notebookMarkdown = "\n";
+    const rewriter = new py.MagicsRewriter();
+    var currStage = "misc";
+    let id_count = -1;
+    let programbuilder = new py.ProgramBuilder();
+    model_card.JSONSchema["modelname"]["Model_Name"] = filePath.split("/")[-1].split(".")[0];
+    const regex = RegExp('Experiment [0-9]+');
+
+    for (let cell of jsondata['cells']) {
+        let sourceCode = "";
+        if (cell['cell_type'] === 'markdown') {
+            model_card.JSONSchema[currStage]["markdown"] += cell['source'];
+        } else if (cell['source'][0] != undefined){
+            // it's code
+            id_count += 1;
+            if (cell['source'][0].includes("Data Cleaning")) {
+                currStage = "datacleaning";
+            } else if (cell['source'][0].includes("Preprocessing")) {
+                currStage = "preprocessing";
+            }else if (cell['source'][0].includes("Model Training")) {
+                currStage = "modeltraining";
+            }else if (cell['source'][0].includes("Model Evaluation")) {
+                currStage = "modelevaluation";
+            }
+
+            for (let line of cell['source']) {
+                if (line[0] === "%") {
+                    line = rewriter.rewriteLineMagic(line);
+                }
+                countLines += 1;
+                model_card.JSONSchema[currStage]["lineNumbers"] += countLines;
+                sourceCode += line;
+            }
+            notebookCode += sourceCode + '\n';
+            let code_cell = createCell(sourceCode, cell['execution_count'], cell['outputs'][0]);
+            //console.log(ic.printInfoCell(code_cell));
+            //console.log("OUTPUT: ", cell["outputs"]);
+            if (cell["outputs"].length != 0) {
+                //console.log("OUTPUT : ", cell["outputs"][0]['output_type']);
+                model_card.outputs[code_cell.persistentId] = cell["outputs"][0];
+                if (cell["outputs"][0]['output_type'] == 'display_data') {
+                    var bitmap = new Buffer.from(cell["outputs"][0]['data']['image/png'], 'base64');
+                    fs.writeFileSync(__dirname + "/../example/" + code_cell.persistentId + ".jpg", bitmap);
+                    var image = "![Hello World](data:image/png;base64," + cell["outputs"][0]['data']['image/png'];
+                    //console.log(model_card.JSONSchema);
+                    model_card.JSONSchema[currStage]["figures"] += image;
+                }
+
+            }
+
+            programbuilder.add(code_cell)
+            model_card.JSONSchema[currStage]["cells"] += JSON.stringify(code_cell);
+            //console.log(code_cell);
+            //console.log(model_card.JSONSchema[currStage]["cells"]);
+            model_card.JSONSchema[currStage]["source"] += sourceCode;
+            model_card.JSONSchema[currStage]["cell_ids"] += id_count;
+        }
+    }
+    // id_count = persistentId
+    let code = programbuilder.buildTo("id" + id_count.toString()).text;
+    //console.log(model_card);
+    //console.log("NOTEBOOK CODE : " + notebookCode);
+    return [notebookCode, notebookMarkdown, model_card];
+
+}
 
 function generateModelName(notebookMarkdown) {
 

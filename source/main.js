@@ -16,14 +16,14 @@ var args = process.argv.slice(2);
 var filePath = args[0];
 var labels = args[1];
 var countLines = 0;
-var markdown_contents = "";
+
 
 class ModelCard {
     constructor() {
         this.JSONSchema = {
-            modelname:{Model_Name:""},
+            modelname:{Model_Name:"", Filename:""},
             authorinfo:{title:"Author Info"},
-            dataset: {title: "Dataset", description:"", link:""},
+            dataset: {title: "Dataset", description:"", links:""},
             references: {title:"References", links:[]},
             libraries:{title:"Libraries Used"},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
@@ -100,7 +100,7 @@ function convertColorToLabel(filePath) {
 }
 
 
-function readCells2(filePath, new_color_map) {
+function readCells2(filePath, new_color_map, markdown_contents) {
     // ## Section  in Markdown
     var contents = fs.readFileSync(path.resolve(__dirname, filePath));
     let jsondata = JSON.parse(contents);
@@ -110,9 +110,9 @@ function readCells2(filePath, new_color_map) {
     var currStage = "misc";
     let id_count = -1;
     let programbuilder = new py.ProgramBuilder();
-    model_card.JSONSchema["modelname"]["Model_Name"] = filePath.split("/").slice(-1);
+    model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1);
     console.log();
-    fs.mkdirSync("../example/" + model_card.JSONSchema["modelname"]["Model_Name"], { recursive: true })
+    fs.mkdirSync("../example/" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
 
 
 
@@ -123,7 +123,6 @@ function readCells2(filePath, new_color_map) {
             for (let mdline of cell['source']) {
                 var matches = mdline.match(/\bhttps?:\/\/[\S][^)]+/gi);
                 if (matches !== null) {
-                    console.log(matches);
                     model_card.JSONSchema["references"]["links"] = model_card.JSONSchema["references"]["links"].concat(matches);
                 }
             }
@@ -164,7 +163,7 @@ function readCells2(filePath, new_color_map) {
                     //model_card.outputs[code_cell.persistentId] += output;
                     if (cell["outputs"][output]['output_type'] == 'display_data') {
                         var bitmap = new Buffer.from(cell["outputs"][output]['data']['image/png'], 'base64');
-                        fs.writeFileSync(__dirname + "/../example/" + model_card.JSONSchema["modelname"]["Model_Name"] + "/" + code_cell.persistentId + ".jpg", bitmap);
+                        fs.writeFileSync(__dirname + "/../example/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + code_cell.persistentId + ".jpg", bitmap);
                         var image = "![Hello World](data:image/png;base64," + cell["outputs"][output]['data']['image/png'];
                         //console.log(model_card.JSONSchema);
                         model_card.JSONSchema[currStage]["figures"].push(code_cell.persistentId + ".jpg");
@@ -186,78 +185,7 @@ function readCells2(filePath, new_color_map) {
 }
 
 
-function readCells(filePath) {
-    var contents = fs.readFileSync(path.resolve(__dirname, filePath));
-    let jsondata = JSON.parse(contents);
-    var notebookCode = "\n";
-    var notebookMarkdown = "\n";
-    const rewriter = new py.MagicsRewriter();
-    var currStage = "misc";
-    let id_count = -1;
-    let programbuilder = new py.ProgramBuilder();
-    model_card.JSONSchema["modelname"]["Model_Name"] = filePath.split("/")[-1].split(".")[0];
-    const regex = RegExp('Experiment [0-9]+');
-
-    for (let cell of jsondata['cells']) {
-        let sourceCode = "";
-        if (cell['cell_type'] === 'markdown') {
-            model_card.JSONSchema[currStage]["markdown"] += cell['source'];
-        } else if (cell['source'][0] != undefined){
-            // it's code
-            id_count += 1;
-            if (cell['source'][0].includes("Data Cleaning")) {
-                currStage = "datacleaning";
-            } else if (cell['source'][0].includes("Preprocessing")) {
-                currStage = "preprocessing";
-            }else if (cell['source'][0].includes("Model Training")) {
-                currStage = "modeltraining";
-            }else if (cell['source'][0].includes("Model Evaluation")) {
-                currStage = "modelevaluation";
-            }
-
-            for (let line of cell['source']) {
-                if (line[0] === "%") {
-                    line = rewriter.rewriteLineMagic(line);
-                }
-                countLines += 1;
-                model_card.JSONSchema[currStage]["lineNumbers"] += countLines;
-                sourceCode += line;
-            }
-            notebookCode += sourceCode + '\n';
-            let code_cell = createCell(sourceCode, cell['execution_count'], cell['outputs'][0]);
-            //console.log(ic.printInfoCell(code_cell));
-            //console.log("OUTPUT: ", cell["outputs"]);
-            if (cell["outputs"].length != 0) {
-                //console.log("OUTPUT : ", cell["outputs"][0]['output_type']);
-                model_card.outputs[code_cell.persistentId] = cell["outputs"][0];
-                if (cell["outputs"][0]['output_type'] == 'display_data') {
-                    var bitmap = new Buffer.from(cell["outputs"][0]['data']['image/png'], 'base64');
-                    fs.writeFileSync(__dirname + "/../example/" + code_cell.persistentId + ".jpg", bitmap);
-                    var image = "![Hello World](data:image/png;base64," + cell["outputs"][0]['data']['image/png'];
-                    //console.log(model_card.JSONSchema);
-                    model_card.JSONSchema[currStage]["figures"] += image;
-                }
-
-            }
-
-            programbuilder.add(code_cell)
-            model_card.JSONSchema[currStage]["cells"] += JSON.stringify(code_cell);
-            //console.log(code_cell);
-            //console.log(model_card.JSONSchema[currStage]["cells"]);
-            model_card.JSONSchema[currStage]["source"] += sourceCode;
-            model_card.JSONSchema[currStage]["cell_ids"] += id_count;
-        }
-    }
-    // id_count = persistentId
-    let code = programbuilder.buildTo("id" + id_count.toString()).text;
-    //console.log(model_card);
-    //console.log("NOTEBOOK CODE : " + notebookCode);
-    return [notebookCode, notebookMarkdown, model_card];
-
-}
-
-
-function printLineDefUse(code, model_card){
+function printLineDefUse(code, model_card, markdown_contents){
     let tree = py.parse(code);
     let cfg = new py.ControlFlowGraph(tree);
 
@@ -281,21 +209,17 @@ function printLineDefUse(code, model_card){
 
     }
     var n = countLines;
-    console.log();
-    console.log("## NUMBER OF LINES OF CODE ##");
-    console.log(n);
-
     // need graph size to be size of lineToCode, not number of edges
     var numgraph = new graphing(n+1);
 
     for (let flow of flows.items) {
         numgraph.addEdge(flow.fromNode.location.first_line, flow.toNode.location.first_line);
     }
-    findImportScope(importScope, lineToCode, numgraph, model_card);
+    findImportScope(importScope, lineToCode, numgraph, model_card, markdown_contents);
 
 }
 
-function findImportScope(importScope, lineToCode, numgraph, model_card) {
+function findImportScope(importScope, lineToCode, numgraph, model_card, markdown_contents) {
     var importCode = Object.keys(importScope);
     var scopes = {};
     var imports = {};
@@ -319,10 +243,10 @@ function findImportScope(importScope, lineToCode, numgraph, model_card) {
 
     }
     //console.log(model_card.JSONSchema["preprocessing"]["imports"]);
-    generateLibraryInfo(imports);
+    generateLibraryInfo(imports, markdown_contents);
 }
 
-function generateLibraryInfo(imports) {
+function generateLibraryInfo(imports, markdown_contents) {
     let library_defs = JSON.parse(fs.readFileSync(__dirname + "/../assets/library_defs.json"));
     //console.log("## Libraries Used ##");
     markdown_contents += "## Libraries Used ##" + "\n";
@@ -373,13 +297,14 @@ function getOutput() {
 }
 
 function printModelCard(model_card) {
-    console.log(model_card.JSONSchema);
+    console.log(JSON.stringify(model_card.JSONSchema));
 }
 
 
-function generateMarkdown(model_card) {
+function generateMarkdown(model_card, notebookCode, markdown_contents) {
 
     var keys = Object.keys( model_card.JSONSchema );
+
     for( var i = 0,length = keys.length; i < length; i++ ) {
         if (keys[i] == 'libraries') {
             printLineDefUse(notebookCode, model_card);
@@ -403,25 +328,17 @@ function generateMarkdown(model_card) {
                     } else if (stageKey == "imports" || stageKey == "markdown") {
                         continue;
                     } else if (stageKey == "figures") {
-                        markdown_contents += markdown_contents += "### " + stageKey + " ###" + "\n";
+                        markdown_contents += "### " + stageKey + " ###" + "\n";
                         for (let image of model_card.JSONSchema[keys[i]][stageKey]) {
-                            markdown_contents += image + "\n";
+                            //![id5](./image/id5.jpg)
+                            markdown_contents += "![" + image + "](" + "../example/" +
+                                model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
                         }
-
-                        /**
-                         *
-                         *
-                         let df_graph = new Object();
-                         df_graph['cell_type'] = 'markdown';
-                         df_graph['metadata'] = new Object();
-                         df_graph['source'] = [];
-                         df_graph['source'].push("![title]" + "(./" + new_name.split("_analysis")[0] + ".svg" + ")");
-                         new_cells.push(df_graph);
-                         */
-
-
-
-                    } else {
+                    } else if (keys[i] == "references" && stageKey == "links") {
+                        for (let link of model_card.JSONSchema['references']['links']) {
+                            markdown_contents += link + "\n";
+                        }
+                    }else {
                         markdown_contents += "### " + stageKey + " ###" + "\n";
                         markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
                     }
@@ -431,6 +348,7 @@ function generateMarkdown(model_card) {
 
 
     }
+    //console.log(markdown_contents);
     fs.writeFile('ModelCard2.md', markdown_contents, (err) => {
         if (err) throw err;
         console.log('Model card saved');
@@ -439,22 +357,18 @@ function generateMarkdown(model_card) {
 }
 
 
-
-
-
 function main() {
-
-
-
-
-
     //generateModelName(notebookMarkdown);
     //generateMarkdown(model_card);
+
+    var markdown_contents = "";
     var new_color = convertColorToLabel(filePath);
     var res = readCells2(filePath, new_color);
     var notebookCode = res[0];
     var notebookMarkdown = res[1];
-    console.log(res[2]);
+    var MC = res[2];
+
+    generateMarkdown(MC, notebookCode, markdown_contents);
 
     //printModelCard(model_card);
     //Stage("datacleaning", model_card);
