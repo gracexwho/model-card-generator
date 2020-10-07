@@ -33,7 +33,6 @@ class ModelCard {
             modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]}
         }
-        this.outputs = {};
         this.markdown = [];
     }
 
@@ -182,6 +181,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
     }
     // id_count = persistentId
     let code = programbuilder.buildTo("id" + id_count.toString()).text;
+    model_card.JSONSchema["markdown"] = notebookMarkdown;
     return [notebookCode, notebookMarkdown, model_card];
 }
 
