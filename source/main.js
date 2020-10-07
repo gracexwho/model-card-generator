@@ -14,7 +14,6 @@ var dep = require("./cell_deps.js");
 
 var args = process.argv.slice(2);
 var filePath = args[0];
-var labels = args[1];
 var countLines = 0;
 
 
@@ -100,7 +99,7 @@ function convertColorToLabel(filePath) {
 }
 
 
-function readCells2(filePath, new_color_map, markdown_contents) {
+function readCells(filePath, new_color_map, markdown_contents) {
     // ## Section  in Markdown
     var contents = fs.readFileSync(path.resolve(__dirname, filePath));
     let jsondata = JSON.parse(contents);
@@ -109,12 +108,11 @@ function readCells2(filePath, new_color_map, markdown_contents) {
     const rewriter = new py.MagicsRewriter();
     var currStage = "misc";
     let id_count = -1;
+    let flag = true;
     let programbuilder = new py.ProgramBuilder();
-    model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1);
+    model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1).toString();
     console.log();
     fs.mkdirSync("../example/" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
-
-
 
     for (let cell of jsondata['cells']) {
         let sourceCode = "";
@@ -126,7 +124,10 @@ function readCells2(filePath, new_color_map, markdown_contents) {
                     model_card.JSONSchema["references"]["links"] = model_card.JSONSchema["references"]["links"].concat(matches);
                 }
             }
-
+            if (id_count == -1 && flag) {
+                flag = false;
+                model_card.JSONSchema["modelname"]["Model_Name"] = cell['source'][0];
+            }
 
         } else if (cell['source'][0] != undefined){
             id_count += 1;
@@ -340,7 +341,7 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
                         }
                     }else {
                         markdown_contents += "### " + stageKey + " ###" + "\n";
-                        markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
+                        markdown_contents += JSON.stringify(model_card.JSONSchema[keys[i]][stageKey]) + "\n";
                     }
                 }
             }
@@ -352,6 +353,7 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
     fs.writeFile('ModelCard2.md', markdown_contents, (err) => {
         if (err) throw err;
         console.log('Model card saved');
+        console.log(model_card);
     });
 
 }
@@ -363,7 +365,7 @@ function main() {
 
     var markdown_contents = "";
     var new_color = convertColorToLabel(filePath);
-    var res = readCells2(filePath, new_color);
+    var res = readCells(filePath, new_color);
     var notebookCode = res[0];
     var notebookMarkdown = res[1];
     var MC = res[2];
@@ -377,12 +379,6 @@ function main() {
     //printCellsOfStage("modeltraining", model_card);
     //printCellsOfStage("modelevaluation", model_card);
 
-    //graphvisual();
-    //convert_nb();
-    //let { stdout } = await sh('node analyze_notebooks ' + '../assets/');
-    //console.log("STDOUT:", stdout);
-    //let stdout = await sh('node convert_nb.js ' + args[0] + ' ' + args[0].split('.ipynb')[0] + '_analysis.txt');
-    //console.log("STDOUT", stdout);
 }
 
 

@@ -3,18 +3,14 @@ exports.__esModule = true;
 
 var py = require("../lib/python-program-analysis/dist/es5");
 var fs = require('fs');
-var path = require('path');
 var child = require('child_process');
-var dep = require("./cell_deps.js");
 
 
 var args = process.argv.slice(2);
 var directory = args[0];
-var labels = args[1];
-var countLines = 0;
 
 
-function analyze_notebooks() {
+function analyze_notebooks(_callback) {
     function sh(cmd) {
         return new Promise(function (resolve, reject) {
             child.exec(cmd, (err, stdout, stderr) => {
@@ -38,7 +34,7 @@ function analyze_notebooks() {
             console.log(result);
             return;
         })
-
+    _callback();
 }
 
 function graphvisual() {
@@ -109,9 +105,17 @@ function getExt(filename){
     return filename.substring(filename.lastIndexOf('.')+1, filename.length);
 }
 
+function randomFunction() {
+    analyze_notebooks(function() {
+        console.log("Finished running analyze_notebooks()");
+        console.log("RANDOM");
+    })
+
+}
+
 
 function main() {
-    analyze_notebooks();      //Cindy's code
+    randomFunction();
 }
 
 main();
