@@ -20,11 +20,11 @@ var countLines = 0;
 class ModelCard {
     constructor() {
         this.JSONSchema = {
-            modelname:{title:"", Filename:""},
-            authorinfo:{title:"Author Info"},
+            modelname:{title:"", Filename:"", cell_ids:[]},
+            author:{title:"Author"},
             dataset: {title: "Dataset", description:"", links:""},
-            references: {title:"References", links:[]},
-            libraries:{title:"Libraries Used"},
+            references: {title:"References", links:[], cell_ids:[]},
+            libraries:{title:"Libraries Used", lib:[]},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
@@ -34,6 +34,9 @@ class ModelCard {
             modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]}
         }
         this.markdown = [];
+        this.intended_use = "";
+        this.ethical_considerations = "";
+        this.developer_comments = "";
     }
 
     getStageLineNumbers(stage_name) {
@@ -203,6 +206,7 @@ function printLineDefUse(code, model_card, markdown_contents){
         lineToCode[flow.toNode.location.last_line] = toNode[toNode.length-1];
         lineToCode[flow.toNode.location.first_line] = toNode[0];
 
+        p(analyzer.getFuncDefs());
         if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
             importScope[flow.fromNode.location.first_line] = -1;
         }
