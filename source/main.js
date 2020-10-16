@@ -206,7 +206,7 @@ function printLineDefUse(code, model_card, markdown_contents){
         lineToCode[flow.toNode.location.last_line] = toNode[toNode.length-1];
         lineToCode[flow.toNode.location.first_line] = toNode[0];
 
-        p(analyzer.getFuncDefs());
+        //p(analyzer.getFuncDefs());
         if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
             importScope[flow.fromNode.location.first_line] = -1;
         }
