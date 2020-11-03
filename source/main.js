@@ -129,6 +129,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
             if (id_count == -1 && flag) {
                 flag = false;
                 model_card.JSONSchema["modelname"]["title"] = cell['source'][0];
+
             }
 
         } else if (cell['source'][0] != undefined){
@@ -354,7 +355,7 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
 
     }
     //console.log(markdown_contents);
-    fs.writeFile('ModelCard2.md', markdown_contents, (err) => {
+    fs.writeFile('ModelCard.md', markdown_contents, (err) => {
         if (err) throw err;
         console.log('Model card saved');
         console.log(model_card);
