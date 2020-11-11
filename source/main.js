@@ -1,6 +1,12 @@
 "use strict";
 exports.__esModule = true;
 
+
+/**
+ * Want markdown cells to have IDs
+ * Want to add cell_ids for provenance of everything
+ * **/
+
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
 
 var py = require("../lib/python-program-analysis/dist/es5");
@@ -23,7 +29,7 @@ class ModelCard {
             modelname:{title:"", Filename:"", cell_ids:[]},
             author:{title:"Author"},
             dataset: {title: "Dataset", description:"", links:""},
-            references: {title:"References", links:[], cell_ids:[]},
+            references: {title:"References", links:[]},
             libraries:{title:"Libraries Used", lib:[]},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
@@ -129,8 +135,8 @@ function readCells(filePath, new_color_map, markdown_contents) {
             if (id_count == -1 && flag) {
                 flag = false;
                 model_card.JSONSchema["modelname"]["title"] = cell['source'][0];
-
             }
+            id_count += 1;
 
         } else if (cell['source'][0] != undefined){
             id_count += 1;
@@ -184,7 +190,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
         }
     }
     // id_count = persistentId
-    let code = programbuilder.buildTo("id" + id_count.toString()).text;
+    //let code = programbuilder.buildTo("id" + id_count.toString()).text;
     model_card.JSONSchema["markdown"] = notebookMarkdown;
     return [notebookCode, notebookMarkdown, model_card];
 }
@@ -195,7 +201,9 @@ function printLineDefUse(code, model_card, markdown_contents){
     let cfg = new py.ControlFlowGraph(tree);
 
     const analyzer = new py.DataflowAnalyzer();
+
     const flows = analyzer.analyze(cfg).dataflows;
+    console.log(analyzer.getFuncDefs());
     var importScope = {};
     var lineToCode = {};
 
@@ -210,7 +218,11 @@ function printLineDefUse(code, model_card, markdown_contents){
         //p(analyzer.getFuncDefs());
         if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
             importScope[flow.fromNode.location.first_line] = -1;
+        } else if (flow.fromNode.type === "def") {
+            console.log("function");
+            // need to implement line to Cell
         }
+
         //g.setEdge(flow.fromNode.location.first_line.toString(), flow.toNode.location.first_line.toString());
 
     }
@@ -358,7 +370,7 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
     fs.writeFile('ModelCard.md', markdown_contents, (err) => {
         if (err) throw err;
         console.log('Model card saved');
-        console.log(model_card);
+        //console.log(model_card);
     });
 
 }

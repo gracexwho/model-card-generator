@@ -31,8 +31,6 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.
 http://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html
 http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
 http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
-### cell_ids ###
-[]
 ## Miscellaneous ##
 ### cell_ids ###
 ["id0","id1","id2","id3"]
