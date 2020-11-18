@@ -181,7 +181,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
                         model_card.JSONSchema[currStage]["figures"].push(code_cell.persistentId + ".jpg");
                     } else if (cell["outputs"][output]['output_type'] == 'stream') {
                         var info = cell["outputs"][output]["text"];
-                        model_card.JSONSchema[currStage]["output"].push(info);
+                        model_card.JSONSchema[currStage]["outputs"].push(info);
                     }
                 }
             }
