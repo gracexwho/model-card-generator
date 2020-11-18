@@ -1,8 +1,8 @@
 {
-  "name": "model-card-generator",
+  "name": "@gracexwho/model-card-generator",
   "version": "1.0.0",
   "description": "Tool for generating model cards for Jupyter Notebook.",
-  "main": "index.js",
+  "main": "source/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +24,8 @@
     "json2md": "^1.7.1"
   },
   "directories": {
+    "example": "example",
+    "lib": "lib",
     "test": "tests"
   },
   "repository": {
@@ -33,5 +35,10 @@
   "bugs": {
     "url": "https://github.com/gracexwho/model-card-generator/issues"
   },
-  "homepage": "https://github.com/gracexwho/model-card-generator#readme"
+  "homepage": "https://github.com/gracexwho/model-card-generator#readme",
+  "keywords": [
+    "JavaScript",
+    "Jupyter",
+    "Notebook"
+  ]
 }
