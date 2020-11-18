@@ -1,12 +1,12 @@
 {
-  "name": "typescript-boilerplate",
+  "name": "model-card-generator",
   "version": "1.0.0",
-  "description": "This is a boilerplate for typescript projects.",
+  "description": "Tool for generating model cards for Jupyter Notebook.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "gracexwho",
   "license": "ISC",
   "devDependencies": {
     "@andrewhead/python-program-analysis": "^0.4.8",

@@ -29,7 +29,7 @@ class ModelCard {
             modelname:{title:"", Filename:"", cell_ids:[]},
             author:{title:"Author"},
             dataset: {title: "Dataset", description:"", links:""},
-            references: {title:"References", links:[]},
+            references: {title:"References", links:[], cell_ids:[]},
             libraries:{title:"Libraries Used", lib:[]},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
@@ -129,12 +129,14 @@ function readCells(filePath, new_color_map, markdown_contents) {
             for (let mdline of cell['source']) {
                 var matches = mdline.match(/\bhttps?:\/\/[\S][^)]+/gi);
                 if (matches !== null) {
+                    model_card.JSONSchema["references"]["cell_ids"].push(id_count);
                     model_card.JSONSchema["references"]["links"] = model_card.JSONSchema["references"]["links"].concat(matches);
                 }
             }
             if (id_count == -1 && flag) {
                 flag = false;
                 model_card.JSONSchema["modelname"]["title"] = cell['source'][0];
+                model_card.JSONSchema["modelname"]["cell_ids"] = id_count;
             }
             id_count += 1;
 
@@ -186,7 +188,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
             //console.log(code_cell);
             //console.log(model_card.JSONSchema[currStage]["cells"]);
             model_card.JSONSchema[currStage]["source"] += sourceCode;
-            model_card.JSONSchema[currStage]["cell_ids"].push(code_cell.persistentId);
+            model_card.JSONSchema[currStage]["cell_ids"].push(id_count);
         }
     }
     // id_count = persistentId
