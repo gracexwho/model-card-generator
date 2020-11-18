@@ -208,7 +208,7 @@ function printLineDefUse(code, model_card, markdown_contents){
     const analyzer = new py.DataflowAnalyzer();
 
     const flows = analyzer.analyze(cfg).dataflows;
-    console.log(analyzer.getFuncDefs());
+    //console.log(analyzer.getFuncDefs());
     var importScope = {};
     var lineToCode = {};
 
