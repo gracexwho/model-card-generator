@@ -16,10 +16,12 @@
     "link": "https://scikit-learn.org/stable/user_guide.html"
   },
   "tensorflow": {
-    "description": "Machine learning framework based on tensors, mostly used for model training and evaluation."
+    "description": "Machine learning framework based on tensors, mostly used for model training and evaluation.",
+    "link":"https://www.tensorflow.org/api_docs"
   },
   "pytorch": {
-    "description": "Machine learning frameork based on tensors, mostly used for model trainng and evaluation."
+    "description": "Machine learning frameork based on tensors, mostly used for model trainng and evaluation.",
+    "link": "https://pytorch.org/docs/stable/index.html"
   },
   "OTHER": {
     "description": ""

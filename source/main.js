@@ -3,8 +3,8 @@ exports.__esModule = true;
 
 
 /**
- * Want markdown cells to have IDs
- * Want to add cell_ids for provenance of everything
+ * Add functions to based on parsing for "def" to each stage
+ * Parse "sklearn.datasets"
  * **/
 
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
@@ -30,7 +30,7 @@ class ModelCard {
             author:{title:"Author"},
             dataset: {title: "Dataset", description:"", links:""},
             references: {title:"References", links:[], cell_ids:[]},
-            libraries:{title:"Libraries Used", lib:[]},
+            libraries:{title:"Libraries Used", lib:{}, info:{}},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
             datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
@@ -177,7 +177,6 @@ function readCells(filePath, new_color_map, markdown_contents) {
                         var bitmap = new Buffer.from(cell["outputs"][output]['data']['image/png'], 'base64');
                         fs.writeFileSync(__dirname + "/../example/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + code_cell.persistentId + ".jpg", bitmap);
                         var image = "![Hello World](data:image/png;base64," + cell["outputs"][output]['data']['image/png'];
-                        //console.log(model_card.JSONSchema);
                         model_card.JSONSchema[currStage]["figures"].push(code_cell.persistentId + ".jpg");
                     } else if (cell["outputs"][output]['output_type'] == 'stream') {
                         var info = cell["outputs"][output]["text"];
@@ -203,12 +202,11 @@ function readCells(filePath, new_color_map, markdown_contents) {
 
 function printLineDefUse(code, model_card, markdown_contents){
     let tree = py.parse(code);
-    let cfg = new py.ControlFlowGraph(tree);
+    //let cfg = new py.ControlFlowGraph(tree);
 
     const analyzer = new py.DataflowAnalyzer();
 
     const flows = analyzer.analyze(cfg).dataflows;
-    //console.log(analyzer.getFuncDefs());
     var importScope = {};
     var lineToCode = {};
 
@@ -292,7 +290,10 @@ function generateLibraryInfo(imports, markdown_contents) {
             libraries["OTHER"].push(im);
         }
     }
-
+    model_card.JSONSchema["libraries"]["lib"] = libraries;
+    model_card.JSONSchema["libraries"]["info"] = library_defs;
+    console.log(library_defs);
+    /**
     for (let lib of Object.keys(libraries)) {
         if (libraries[lib].length > 0) {
             //console.log("### From the library ", lib, " ###");
@@ -305,6 +306,7 @@ function generateLibraryInfo(imports, markdown_contents) {
             //console.log("--");
         }
     }
+     **/
 
 }
 
@@ -393,7 +395,7 @@ function main() {
     var MC = res[2];
 
     generateMarkdown(MC, notebookCode, markdown_contents);
-
+    console.log(model_card);
     //printModelCard(model_card);
     //Stage("datacleaning", model_card);
 
