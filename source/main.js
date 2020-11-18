@@ -179,6 +179,9 @@ function readCells(filePath, new_color_map, markdown_contents) {
                         var image = "![Hello World](data:image/png;base64," + cell["outputs"][output]['data']['image/png'];
                         //console.log(model_card.JSONSchema);
                         model_card.JSONSchema[currStage]["figures"].push(code_cell.persistentId + ".jpg");
+                    } else if (cell["outputs"][output]['output_type'] == 'stream') {
+                        var info = cell["outputs"][output]["text"];
+                        model_card.JSONSchema[currStage]["output"].push(info);
                     }
                 }
             }
