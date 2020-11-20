@@ -1,8 +1,8 @@
 "use strict";
 exports.__esModule = true;
 
-
 /**
+ * @TODO
  * Add functions to based on parsing for "def" to each stage
  * Parse "sklearn.datasets"
  * **/
@@ -62,7 +62,6 @@ class ModelCard {
     }
 }
 var model_card = new ModelCard();
-
 
 function createCell(text, executionCount, output) {
     return new ic.InfoCell(text, executionCount, output);
@@ -202,11 +201,10 @@ function readCells(filePath, new_color_map, markdown_contents) {
 
 function printLineDefUse(code, model_card, markdown_contents){
     let tree = py.parse(code);
-    //let cfg = new py.ControlFlowGraph(tree);
-
+    let cfg = new py.ControlFlowGraph(tree);
     const analyzer = new py.DataflowAnalyzer();
-
     const flows = analyzer.analyze(cfg).dataflows;
+
     var importScope = {};
     var lineToCode = {};
 
@@ -220,6 +218,10 @@ function printLineDefUse(code, model_card, markdown_contents){
 
         //p(analyzer.getFuncDefs());
         if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
+            if (fromNode[0].includes("sklearn.datasets")) {
+
+            }
+
             importScope[flow.fromNode.location.first_line] = -1;
         } else if (flow.fromNode.type === "def") {
             console.log("function");
@@ -248,10 +250,12 @@ function findImportScope(importScope, lineToCode, numgraph, model_card, markdown
     for (let lineNum of importCode) {
         var result = numgraph.findLongestPathSrc(numgraph.edge.length, parseInt(lineNum))
         scopes[lineNum] = result[1];
-        var order = result[1];
         //console.log(lineToCode[lineNum]);
         //console.log("START: ", lineNum.toString(), " END: ", scopes[lineNum]);
         imports[lineToCode[lineNum]] = "START:" + lineNum.toString() + "\t" + " END:" + scopes[lineNum];
+
+
+
         if (model_card.getDCLineNumbers().includes(parseInt(lineNum))) {
             model_card.JSONSchema["datacleaning"]["imports"].push(lineToCode[lineNum]);
         } else if (model_card.getPPLineNumbers().includes(parseInt(lineNum))) {
@@ -292,7 +296,7 @@ function generateLibraryInfo(imports, markdown_contents) {
     }
     model_card.JSONSchema["libraries"]["lib"] = libraries;
     model_card.JSONSchema["libraries"]["info"] = library_defs;
-    console.log(library_defs);
+    //console.log(library_defs);
     /**
     for (let lib of Object.keys(libraries)) {
         if (libraries[lib].length > 0) {
@@ -376,7 +380,7 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
     //console.log(markdown_contents);
     fs.writeFile('ModelCard.md', markdown_contents, (err) => {
         if (err) throw err;
-        console.log('Model card saved');
+        console.log('Model card saved!');
         //console.log(model_card);
     });
 
@@ -395,7 +399,7 @@ function main() {
     var MC = res[2];
 
     generateMarkdown(MC, notebookCode, markdown_contents);
-    console.log(model_card);
+    //console.log(model_card);
     //printModelCard(model_card);
     //Stage("datacleaning", model_card);
 

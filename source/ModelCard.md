@@ -3,7 +3,7 @@
 ### Filename ###
 "News_Categorization_MNB.ipynb"
 ### cell_ids ###
-[]
+-1
 ## Author ##
 ## Dataset ##
 ### description ###
@@ -31,9 +31,11 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.
 http://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html
 http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
 http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
+### cell_ids ###
+[-1,0,2,3,8,9,15,17,19,24,32,32,32,32,35,37,40,46]
 ## Miscellaneous ##
 ### cell_ids ###
-["id0","id1","id2","id3"]
+[11,13,15,17]
 ### cells ###
 "[object Object][object Object][object Object][object Object]"
 ### lineNumbers ###
@@ -44,10 +46,31 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### description ###
 ""
 ### outputs ###
+   ID                                              TITLE  \
+,0   1  Fed official says weak data caused by weather,...   
+,1   2  Fed's Charles Plosser sees high bar for change...   
+,2   3  US open: Stocks fall after Fed official hints ...   
+,3   4  Fed risks falling 'behind the curve', Charles ...   
+,4   5  Fed's Plosser: Nasty Weather Has Curbed Job Gr...   
+,
+,                                                 URL          PUBLISHER  \
+,0  http://www.latimes.com/business/money/la-fi-mo...  Los Angeles Times   
+,1  http://www.livemint.com/Politics/H2EvwJSK2VE6O...           Livemint   
+,2  http://www.ifamagazine.com/news/us-open-stocks...       IFA Magazine   
+,3  http://www.ifamagazine.com/news/fed-risks-fall...       IFA Magazine   
+,4  http://www.moneynews.com/Economy/federal-reser...          Moneynews   
+,
+,  CATEGORY                          STORY             HOSTNAME      TIMESTAMP  
+,0        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM      www.latimes.com  1394470370698  
+,1        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM     www.livemint.com  1394470371207  
+,2        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM  www.ifamagazine.com  1394470371550  
+,3        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM  www.ifamagazine.com  1394470371793  
+,4        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM    www.moneynews.com  1394470372027  
+,Wall time: 7.72 s
 
 ## Plotting ##
 ### cell_ids ###
-["id5","id6","id7","id8","id9","id15"]
+[21,26,27,29,31,44]
 ### cells ###
 "[object Object][object Object][object Object][object Object][object Object][object Object]"
 ### lineNumbers ###
@@ -60,10 +83,17 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### description ###
 ""
 ### outputs ###
+Wall time: 1.06 s
+,  category    news   percent
+,0        b   81238  0.274738
+,1        e  106844  0.361334
+,2        m   31930  0.107984
+,3        t   75681  0.255945
+,total 	 295693
 
 ## Data Cleaning ##
 ### cell_ids ###
-["id4","id14","id17"]
+[19,42,48]
 ### cells ###
 "[object Object][object Object][object Object]"
 ### lineNumbers ###
@@ -74,6 +104,12 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### description ###
 ""
 ### outputs ###
+  category    news   percent
+,0        b  115967  0.274531
+,1        e  152469  0.360943
+,2        m   45639  0.108042
+,3        t  108344  0.256485
+,total 	 422419
 
 ## Preprocessing ##
 ### cell_ids ###
@@ -114,7 +150,7 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 
 ## Evaluation ##
 ### cell_ids ###
-["id10","id11","id12","id13","id16","id18"]
+[34,35,37,39,45,49]
 ### cells ###
 "[object Object][object Object][object Object][object Object][object Object][object Object]"
 ### lineNumbers ###
@@ -126,6 +162,22 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### description ###
 ""
 ### outputs ###
+Wall time: 27.1 s
+,             precision    recall  f1-score   support
+,
+,          b       0.90      0.91      0.90     34729
+,          e       0.95      0.97      0.96     45625
+,          m       0.97      0.85      0.90     13709
+,          t       0.90      0.90      0.90     32663
+,
+,avg / total       0.92      0.92      0.92    126726
+,
+,  category  f1-score   percent
+,0        b  0.903839  0.274738
+,1        e  0.959225  0.361334
+,2        m  0.902814  0.107984
+,3        t  0.903314  0.255945
+,total 	 295693
 
 ### 0 ###
 "\n"

@@ -9,10 +9,10 @@
   "author": "gracexwho",
   "license": "ISC",
   "devDependencies": {
-    "@andrewhead/python-program-analysis": "^0.4.8",
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.14.8",
     "mocha": "^8.2.1",
+    "modified-python-program-analysis": "^1.0.0",
     "python-shell": "^2.0.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
