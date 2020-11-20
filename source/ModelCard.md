@@ -5,11 +5,13 @@
 ### cell_ids ###
 -1
 ## Author ##
-## Dataset ##
+## Datasets ##
 ### description ###
 ""
 ### links ###
 ""
+### cell_ids ###
+[]
 ## References ##
 https://www.linkedin.com/in/andres-soto-villaverde-36198a5/
 https://www.kaggle.com/uciml/news-aggregator-dataset
@@ -33,6 +35,15 @@ http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matr
 http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### cell_ids ###
 [-1,0,2,3,8,9,15,17,19,24,32,32,32,32,35,37,40,46]
+## Hyperparameters ##
+### cell_ids ###
+[]
+### cells ###
+[]
+### lineNumbers ###
+[]
+### values ###
+""
 ## Miscellaneous ##
 ### cell_ids ###
 [11,13,15,17]
@@ -41,7 +52,7 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### lineNumbers ###
 [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
 ### functions ###
-""
+[]
 ### figures ###
 ### description ###
 ""
@@ -76,7 +87,7 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### lineNumbers ###
 [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128]
 ### functions ###
-""
+["def count_data(labels, categories):    c = Counter(categories)\n    cont = dict(c)\n    tot = sum(list(cont.values()))\n    d = {[object Object]:[object Object],[object Object]:[object Object],[object Object]:[object Object]}\nprint(pd.DataFrame(d))\nprint(\"total \\t\",tot)\n    return cont","def categories_pie_plot(cont, tit):    global labels\n    sizes = [cont[l], continue]\npl.pie(sizes,explode=(0, 0, 0, 0),labels=labels,autopct='%1.1f%%',shadow=True,startangle=90)\npl.title(tit)\npl.show()","def count_data(labels, categories):    c = Counter(categories)\n    cont = dict(c)\n    tot = sum(list(cont.values()))\n    d = {[object Object]:[object Object],[object Object]:[object Object],[object Object]:[object Object]}\nprint(pd.DataFrame(d))\nprint(\"total \\t\",tot)\n    return cont","def categories_pie_plot(cont, tit):    global labels\n    sizes = [cont[l], continue]\npl.pie(sizes,explode=(0, 0, 0, 0),labels=labels,autopct='%1.1f%%',shadow=True,startangle=90)\npl.title(tit)\npl.show()","def categories_pie_plot(cont, tit):    global labels\n    sizes = [cont[l], continue]\npl.pie(sizes,explode=(0, 0, 0, 0),labels=labels,autopct='%1.1f%%',shadow=True,startangle=90)\npl.title(tit)\npl.show()","def count_data(labels, categories):    c = Counter(categories)\n    cont = dict(c)\n    tot = sum(list(cont.values()))\n    d = {[object Object]:[object Object],[object Object]:[object Object],[object Object]:[object Object]}\nprint(pd.DataFrame(d))\nprint(\"total \\t\",tot)\n    return cont"]
 ### figures ###
 ![id5.jpg](../example/News_Categorization_MNB.ipynb/id5.jpg)
 ![id9.jpg](../example/News_Categorization_MNB.ipynb/id9.jpg)
@@ -99,7 +110,7 @@ Wall time: 1.06 s
 ### lineNumbers ###
 [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,99,100,101,130,131,132,133,134,135,136,137,138,139,140,141,142,143]
 ### functions ###
-""
+[]
 ### figures ###
 ### description ###
 ""
@@ -119,21 +130,12 @@ Wall time: 1.06 s
 ### lineNumbers ###
 []
 ### functions ###
-""
+[]
 ### figures ###
 ### description ###
 ""
 ### outputs ###
 
-## Hyperparameters ##
-### cell_ids ###
-[]
-### cells ###
-[]
-### lineNumbers ###
-[]
-### values ###
-""
 ## Model Training ##
 ### cell_ids ###
 []
@@ -142,7 +144,7 @@ Wall time: 1.06 s
 ### lineNumbers ###
 []
 ### functions ###
-""
+[]
 ### figures ###
 ### description ###
 ""
@@ -156,7 +158,7 @@ Wall time: 1.06 s
 ### lineNumbers ###
 [71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,129,144,145]
 ### functions ###
-""
+[]
 ### figures ###
 ![id16.jpg](../example/News_Categorization_MNB.ipynb/id16.jpg)
 ### description ###
@@ -179,5 +181,3 @@ Wall time: 27.1 s
 ,3        t  0.903314  0.255945
 ,total 	 295693
 
-### 0 ###
-"\n"

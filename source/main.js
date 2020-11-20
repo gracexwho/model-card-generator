@@ -28,18 +28,19 @@ class ModelCard {
         this.JSONSchema = {
             modelname:{title:"", Filename:"", cell_ids:[]},
             author:{title:"Author"},
-            dataset: {title: "Dataset", description:"", links:""},
-            references: {title:"References", links:[], cell_ids:[]},
-            libraries:{title:"Libraries Used", lib:{}, info:{}},
-            misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
-            plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
-            datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
-            preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
+            datasets: {title: "Datasets", description:"", links:"", cell_ids:[]},
+            references: {title:"References", source:"", links:[], cell_ids:[]},
+            libraries:{title:"Libraries Used", lib:{}, info:{}, cell_ids:[]},
             hyperparameters:{title:"Hyperparameters", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", values:""},
-            modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]},
-            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:"", figures:[], description:"", outputs:[]}
+            misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
+            plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
+            datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
+            preprocessing:{title:"Preprocessing", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
+            modeltraining:{title:"Model Training", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
+            modelevaluation:{title:"Evaluation", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]}
         }
-        this.markdown = [];
+        this.line_to_cell = {};
+        this.markdown = "";
         this.intended_use = "";
         this.ethical_considerations = "";
         this.developer_comments = "";
@@ -47,6 +48,9 @@ class ModelCard {
 
     getStageLineNumbers(stage_name) {
         return this.JSONSchema[stage_name]["lineNumbers"];
+    }
+    getPLineNumbers() {
+        return this.JSONSchema["plotting"]["lineNumbers"];
     }
     getDCLineNumbers() {
         return this.JSONSchema["datacleaning"]["lineNumbers"];
@@ -111,7 +115,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
     var contents = fs.readFileSync(path.resolve(__dirname, filePath));
     let jsondata = JSON.parse(contents);
     var notebookCode = "\n";
-    var notebookMarkdown = "\n";
+    var notebookMarkdown = "";
     const rewriter = new py.MagicsRewriter();
     var currStage = "misc";
     let id_count = -1;
@@ -138,6 +142,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
                 model_card.JSONSchema["modelname"]["cell_ids"] = id_count;
             }
             id_count += 1;
+            notebookMarkdown += cell["source"];
 
         } else if (cell['source'][0] != undefined){
             id_count += 1;
@@ -163,6 +168,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
                 }
                 countLines += 1;
                 model_card.JSONSchema[currStage]["lineNumbers"].push(countLines);
+                model_card.line_to_cell[countLines] = id_count;
                 sourceCode += line;
             }
             notebookCode += sourceCode + '\n';
@@ -194,7 +200,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
     }
     // id_count = persistentId
     //let code = programbuilder.buildTo("id" + id_count.toString()).text;
-    model_card.JSONSchema["markdown"] = notebookMarkdown;
+    model_card.markdown += notebookMarkdown;
     return [notebookCode, notebookMarkdown, model_card];
 }
 
@@ -207,10 +213,17 @@ function printLineDefUse(code, model_card, markdown_contents){
 
     var importScope = {};
     var lineToCode = {};
+    var pLines = model_card.getPLineNumbers();
+    var dcLines = model_card.getDCLineNumbers();
+    var ppLines = model_card.getPPLineNumbers();
+    var mtLines = model_card.getMTLineNumbers();
+    var meLines = model_card.getMELineNumbers();
+
 
     for (let flow of flows.items) {
         let fromNode = py.printNode(flow.fromNode).split("\n");
         let toNode = py.printNode(flow.toNode).split("\n");
+
         lineToCode[flow.fromNode.location.first_line] = fromNode[0];
         lineToCode[flow.fromNode.location.last_line] = fromNode[fromNode.length-1];
         lineToCode[flow.toNode.location.last_line] = toNode[toNode.length-1];
@@ -219,13 +232,23 @@ function printLineDefUse(code, model_card, markdown_contents){
         //p(analyzer.getFuncDefs());
         if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
             if (fromNode[0].includes("sklearn.datasets")) {
-
+                model_card.JSONSchema["Datasets"]["source"] += fromNode[0];
+                model_card.JSONSchema["Datasets"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
             }
-
             importScope[flow.fromNode.location.first_line] = -1;
+            model_card.JSONSchema["libraries"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
         } else if (flow.fromNode.type === "def") {
-            console.log("function");
-            // need to implement line to Cell
+            if (flow.fromNode.location.first_line in pLines) {
+                model_card.JSONSchema["plotting"]["functions"].push(py.printNode(flow.fromNode));
+            } else if (flow.fromNode.location.first_line in dcLines) {
+                model_card.JSONSchema["datacleaning"]["functions"].push(py.printNode(flow.fromNode));
+            } else if (flow.fromNode.location.first_line in ppLines) {
+                model_card.JSONSchema["preprocessing"]["functions"].push(py.printNode(flow.fromNode));
+            } else if (flow.fromNode.location.first_line in mtLines) {
+                model_card.JSONSchema["modeltraining"]["functions"].push(py.printNode(flow.fromNode));
+            } else if (flow.fromNode.location.first_line in meLines) {
+                model_card.JSONSchema["modelevaluation"]["functions"].push(py.printNode(flow.fromNode));s
+            }
         }
 
         //g.setEdge(flow.fromNode.location.first_line.toString(), flow.toNode.location.first_line.toString());
@@ -253,8 +276,6 @@ function findImportScope(importScope, lineToCode, numgraph, model_card, markdown
         //console.log(lineToCode[lineNum]);
         //console.log("START: ", lineNum.toString(), " END: ", scopes[lineNum]);
         imports[lineToCode[lineNum]] = "START:" + lineNum.toString() + "\t" + " END:" + scopes[lineNum];
-
-
 
         if (model_card.getDCLineNumbers().includes(parseInt(lineNum))) {
             model_card.JSONSchema["datacleaning"]["imports"].push(lineToCode[lineNum]);
@@ -399,6 +420,7 @@ function main() {
     var MC = res[2];
 
     generateMarkdown(MC, notebookCode, markdown_contents);
+    //console.log(model_card.line_to_cell)
     //console.log(model_card);
     //printModelCard(model_card);
     //Stage("datacleaning", model_card);
