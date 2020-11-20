@@ -3,7 +3,6 @@ exports.__esModule = true;
 
 /**
  * @TODO
- * Add functions to based on parsing for "def" to each stage
  * Parse "sklearn.datasets"
  * **/
 
