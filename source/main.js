@@ -3,14 +3,12 @@ exports.__esModule = true;
 
 /**
  * @TODO
- * Change Paths to modified-python-program-analysis instead of lib, and delete PPA in lib
  * Parse "sklearn.datasets"
  * **/
 
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
 
 //var py = require("../lib/python-program-analysis/dist/es5");
-
 var graphing = require("./Graph.js").Graph;
 var py = require("modified-python-program-analysis/dist/es5");
 var fs = require('fs');
@@ -120,7 +118,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
     var notebookMarkdown = "";
     const rewriter = new py.MagicsRewriter();
     var currStage = "misc";
-    let id_count = -1;
+    let id_count = 0;
     let flag = true;
     let programbuilder = new py.ProgramBuilder();
     model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1).toString();
@@ -376,7 +374,6 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
                         markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
                         //var image = document.createElement('img');
                         //image.src = "data:image/png;base64," + base64JsonData;
-
 
                     } else if (stageKey == "imports" || stageKey == "markdown") {
                         continue;
