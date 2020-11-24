@@ -1,4 +1,5 @@
-var py = require("../lib/python-program-analysis/dist/es5");
+//var py = require("../lib/python-program-analysis/dist/es5");
+var py = require("modified-python-program-analysis/dist/es5");
 
 module.exports = {
     getSourceFromCell: function(cell){

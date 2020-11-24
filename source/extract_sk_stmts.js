@@ -1,7 +1,7 @@
 var fs = require('fs');
 var utils = require("./cell_utils.js");
-var py = require("../lib/python-program-analysis/dist/es5");
-
+//var py = require("../lib/python-program-analysis/dist/es5");
+var py = require("modified-python-program-analysis");
 
 module.exports = {
     calculateCells: function(name){

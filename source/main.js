@@ -9,8 +9,10 @@ exports.__esModule = true;
 
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
 
-var py = require("../lib/python-program-analysis/dist/es5");
+//var py = require("../lib/python-program-analysis/dist/es5");
+
 var graphing = require("./Graph.js").Graph;
+var py = require("modified-python-program-analysis/dist/es5");
 var fs = require('fs');
 var path = require('path');
 var ic = require("./infocell");
@@ -165,6 +167,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
             for (let line of cell['source']) {
                 if (line[0] === "%") {
                     line = rewriter.rewriteLineMagic(line);
+
                 }
                 countLines += 1;
                 model_card.JSONSchema[currStage]["lineNumbers"].push(countLines);
