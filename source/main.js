@@ -231,11 +231,11 @@ function printLineDefUse(code, model_card, markdown_contents){
         lineToCode[flow.toNode.location.last_line] = toNode[toNode.length-1];
         lineToCode[flow.toNode.location.first_line] = toNode[0];
 
-        //p(analyzer.getFuncDefs());
         if (flow.fromNode.type === "from" || flow.fromNode.type === "import") {
+            console.log(fromNode[0]);
             if (fromNode[0].includes("sklearn.datasets")) {
-                model_card.JSONSchema["Datasets"]["source"] += fromNode[0];
-                model_card.JSONSchema["Datasets"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
+                model_card.JSONSchema["datasets"]["source"] += fromNode[0];
+                model_card.JSONSchema["datasets"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
             }
             importScope[flow.fromNode.location.first_line] = -1;
             model_card.JSONSchema["libraries"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
@@ -253,8 +253,6 @@ function printLineDefUse(code, model_card, markdown_contents){
             }
         }
 
-        //g.setEdge(flow.fromNode.location.first_line.toString(), flow.toNode.location.first_line.toString());
-
     }
     var n = countLines;
     // need graph size to be size of lineToCode, not number of edges
@@ -266,6 +264,39 @@ function printLineDefUse(code, model_card, markdown_contents){
     findImportScope(importScope, lineToCode, numgraph, model_card, markdown_contents);
 
 }
+
+
+function getHyperparameters(importStatement) {
+    var contents = fs.readFileSync(__dirname + filename, "utf8");
+    var flag = false;
+    var hyperparams = "";
+    for (let line of contents.split("\n")) {
+        //console.log(line);
+        if (line.includes("relevantToOptimizer")) {
+            flag = true;
+        }
+        if (flag) {
+            hyperparams += line;
+        }
+        if (line.includes("],")) {
+            flag = false;
+        }
+    }
+    hyperparams = hyperparams.substr(hyperparams.indexOf('[')+1);
+    hyperparams = hyperparams.split("]")[0];
+    hyperparams = hyperparams.split(",");
+    var parameters = [];
+    for (let s of hyperparams) {
+        s = s.replace(/['"]+/g, "");
+        s = s.trim();
+        if (s) {
+            parameters.push(s);
+        }
+    }
+    return parameters;
+}
+
+
 
 function findImportScope(importScope, lineToCode, numgraph, model_card, markdown_contents) {
     var importCode = Object.keys(importScope);

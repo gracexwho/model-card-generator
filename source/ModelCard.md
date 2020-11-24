@@ -1,9 +1,8 @@
-## # News Categorization using Multinomial Naive Bayes
- ##
+##  ##
 ### Filename ###
-"News_Categorization_MNB.ipynb"
+"iris.ipynb"
 ### cell_ids ###
--1
+[]
 ## Author ##
 ## Datasets ##
 ### description ###
@@ -13,28 +12,8 @@
 ### cell_ids ###
 []
 ## References ##
-https://www.linkedin.com/in/andres-soto-villaverde-36198a5/
-https://www.kaggle.com/uciml/news-aggregator-dataset
-http://archive.ics.uci.edu/ml
-http://archive.ics.uci.edu/ml/datasets/News+Aggregator
-http://pandas.pydata.org/
-http://ipython.readthedocs.io/en/stable/interactive/magics.html#
-https://ipython.org/ipython-doc/3/interactive/magics.html
-https://docs.python.org/3/library/collections.html#counter-objects
-http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
-http://scikit-learn.org/stable/modules/generated/sklearn.utils.shuffle.html
-http://scikit-learn.org/stable/modules/feature_extraction.html#common-vectorizer-usage
-http://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting
-http://scikit-learn.org/stable/modules/naive_bayes.html#multinomial-naive-bayes
-http://scikit-learn.org/stable/modules/pipeline.html
-http://scikit-learn.org/stable/modules/classes.html
-https://en.wikipedia.org/wiki/Precision_and_recall
-http://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html
-http://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html
-http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
-http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ### cell_ids ###
-[-1,0,2,3,8,9,15,17,19,24,32,32,32,32,35,37,40,46]
+[]
 ## Hyperparameters ##
 ### cell_ids ###
 []
@@ -46,81 +25,46 @@ http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
 ""
 ## Miscellaneous ##
 ### cell_ids ###
-[11,13,15,17]
+[1,2]
 ### cells ###
-"[object Object][object Object][object Object][object Object]"
+"[object Object][object Object]"
 ### lineNumbers ###
-[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
 ### functions ###
 []
 ### figures ###
 ### description ###
 ""
 ### outputs ###
-   ID                                              TITLE  \
-,0   1  Fed official says weak data caused by weather,...   
-,1   2  Fed's Charles Plosser sees high bar for change...   
-,2   3  US open: Stocks fall after Fed official hints ...   
-,3   4  Fed risks falling 'behind the curve', Charles ...   
-,4   5  Fed's Plosser: Nasty Weather Has Curbed Job Gr...   
-,
-,                                                 URL          PUBLISHER  \
-,0  http://www.latimes.com/business/money/la-fi-mo...  Los Angeles Times   
-,1  http://www.livemint.com/Politics/H2EvwJSK2VE6O...           Livemint   
-,2  http://www.ifamagazine.com/news/us-open-stocks...       IFA Magazine   
-,3  http://www.ifamagazine.com/news/fed-risks-fall...       IFA Magazine   
-,4  http://www.moneynews.com/Economy/federal-reser...          Moneynews   
-,
-,  CATEGORY                          STORY             HOSTNAME      TIMESTAMP  
-,0        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM      www.latimes.com  1394470370698  
-,1        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM     www.livemint.com  1394470371207  
-,2        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM  www.ifamagazine.com  1394470371550  
-,3        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM  www.ifamagazine.com  1394470371793  
-,4        b  ddUyU0VZz0BRneMioxUPQVP6sIxvM    www.moneynews.com  1394470372027  
-,Wall time: 7.72 s
 
 ## Plotting ##
 ### cell_ids ###
-[21,26,27,29,31,44]
+[3,8]
 ### cells ###
-"[object Object][object Object][object Object][object Object][object Object][object Object]"
+"[object Object][object Object]"
 ### lineNumbers ###
-[39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128]
+[22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,50,51,52,53,54,55,56,57,58]
 ### functions ###
-["def count_data(labels, categories):    c = Counter(categories)\n    cont = dict(c)\n    tot = sum(list(cont.values()))\n    d = {[object Object]:[object Object],[object Object]:[object Object],[object Object]:[object Object]}\nprint(pd.DataFrame(d))\nprint(\"total \\t\",tot)\n    return cont","def categories_pie_plot(cont, tit):    global labels\n    sizes = [cont[l], continue]\npl.pie(sizes,explode=(0, 0, 0, 0),labels=labels,autopct='%1.1f%%',shadow=True,startangle=90)\npl.title(tit)\npl.show()","def count_data(labels, categories):    c = Counter(categories)\n    cont = dict(c)\n    tot = sum(list(cont.values()))\n    d = {[object Object]:[object Object],[object Object]:[object Object],[object Object]:[object Object]}\nprint(pd.DataFrame(d))\nprint(\"total \\t\",tot)\n    return cont","def categories_pie_plot(cont, tit):    global labels\n    sizes = [cont[l], continue]\npl.pie(sizes,explode=(0, 0, 0, 0),labels=labels,autopct='%1.1f%%',shadow=True,startangle=90)\npl.title(tit)\npl.show()","def categories_pie_plot(cont, tit):    global labels\n    sizes = [cont[l], continue]\npl.pie(sizes,explode=(0, 0, 0, 0),labels=labels,autopct='%1.1f%%',shadow=True,startangle=90)\npl.title(tit)\npl.show()","def count_data(labels, categories):    c = Counter(categories)\n    cont = dict(c)\n    tot = sum(list(cont.values()))\n    d = {[object Object]:[object Object],[object Object]:[object Object],[object Object]:[object Object]}\nprint(pd.DataFrame(d))\nprint(\"total \\t\",tot)\n    return cont"]
+["def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def treeviz(tree):    dot_data = StringIO()\nexport_graphviz(tree,out_file=dot_data,feature_names=['petal (cm)', 'sepal (cm)'],class_names=iris.target_names,filled=True,rounded=True,special_characters=True)\n    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())\n    return Image(graph.create_png())","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')","def plot_model_decision(model, proba):plt.figure(figsize=(8, 8))\n    xx, yy = np.meshgrid(np.linspace(0,9,100),np.linspace(0,9,100))\n    if proba:        Z = model.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]    else:        Z = model.predict(np.c_[xx.ravel(), yy.ravel()])\n    Z = Z.reshape(xx.shape)\n    cs = plt.contourf(xx,yy,Z,alpha=0.3)\n    for i, label in enumerate(iris.target_names):plt.scatter(X[(y==i)][:, 0],X[(y==i)][:, 1],label=label)\nplt.xlabel('Petal (cm)')\nplt.ylabel('Sepal (cm)')\nplt.xlim(0,9)\nplt.ylim(0,9)\nplt.legend(loc='best')"]
 ### figures ###
-![id5.jpg](../example/News_Categorization_MNB.ipynb/id5.jpg)
-![id9.jpg](../example/News_Categorization_MNB.ipynb/id9.jpg)
+![id7.jpg](../example/iris.ipynb/id7.jpg)
 ### description ###
 ""
 ### outputs ###
-Wall time: 1.06 s
-,  category    news   percent
-,0        b   81238  0.274738
-,1        e  106844  0.361334
-,2        m   31930  0.107984
-,3        t   75681  0.255945
-,total 	 295693
 
 ## Data Cleaning ##
 ### cell_ids ###
-[19,42,48]
+[4,5,6,7]
 ### cells ###
-"[object Object][object Object][object Object]"
+"[object Object][object Object][object Object][object Object]"
 ### lineNumbers ###
-[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,99,100,101,130,131,132,133,134,135,136,137,138,139,140,141,142,143]
+[43,44,45,46,47,48,49]
 ### functions ###
 []
 ### figures ###
 ### description ###
 ""
 ### outputs ###
-  category    news   percent
-,0        b  115967  0.274531
-,1        e  152469  0.360943
-,2        m   45639  0.108042
-,3        t  108344  0.256485
-,total 	 422419
 
 ## Preprocessing ##
 ### cell_ids ###
@@ -138,46 +82,32 @@ Wall time: 1.06 s
 
 ## Model Training ##
 ### cell_ids ###
-[]
+[9,10,11,12,13,14,15,16,17,18]
 ### cells ###
-[]
+"[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
 ### lineNumbers ###
-[]
+[59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78]
 ### functions ###
 []
 ### figures ###
+![id9.jpg](../example/iris.ipynb/id9.jpg)
+![id10.jpg](../example/iris.ipynb/id10.jpg)
+![id17.jpg](../example/iris.ipynb/id17.jpg)
 ### description ###
 ""
 ### outputs ###
 
 ## Evaluation ##
 ### cell_ids ###
-[34,35,37,39,45,49]
+[]
 ### cells ###
-"[object Object][object Object][object Object][object Object][object Object][object Object]"
+[]
 ### lineNumbers ###
-[71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,129,144,145]
+[]
 ### functions ###
 []
 ### figures ###
-![id16.jpg](../example/News_Categorization_MNB.ipynb/id16.jpg)
 ### description ###
 ""
 ### outputs ###
-Wall time: 27.1 s
-,             precision    recall  f1-score   support
-,
-,          b       0.90      0.91      0.90     34729
-,          e       0.95      0.97      0.96     45625
-,          m       0.97      0.85      0.90     13709
-,          t       0.90      0.90      0.90     32663
-,
-,avg / total       0.92      0.92      0.92    126726
-,
-,  category  f1-score   percent
-,0        b  0.903839  0.274738
-,1        e  0.959225  0.361334
-,2        m  0.902814  0.107984
-,3        t  0.903314  0.255945
-,total 	 295693
 
