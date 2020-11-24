@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/lib/python-program-analysis/dist" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/test_lale" />
       <excludeFolder url="file://$MODULE_DIR$/test_lale/.ipynb_checkpoints" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
