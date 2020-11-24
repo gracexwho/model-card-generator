@@ -3,7 +3,8 @@ exports.__esModule = true;
 
 /**
  * @TODO
- * Parse "sklearn.datasets"
+ * Merge Code into Sixian's Repo
+ * Hyperparameters -> call POST/GET statement from json formatter with the lale hyperparameter libraries and parse that json
  * **/
 
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
