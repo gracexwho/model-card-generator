@@ -15,7 +15,6 @@ var py = require("modified-python-program-analysis/dist/es5");
 var fs = require('fs');
 var path = require('path');
 var ic = require("./infocell");
-var child = require('child_process');
 var dep = require("./cell_deps.js");
 
 
@@ -126,8 +125,8 @@ function convertColorToLabel(filePath) {
 
 function readCells(filePath, new_color_map, markdown_contents) {
     // ## Section  in Markdown
-    var contents = fs.readFileSync(path.resolve(__dirname, filePath));
-    let jsondata = JSON.parse(contents);
+    var content = fs.readFileSync(path.resolve(__dirname, filePath));
+    let jsondata = JSON.parse(content);
     var notebookCode = "\n";
     var notebookMarkdown = "";
     const rewriter = new py.MagicsRewriter();
@@ -150,7 +149,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
                     model_card.JSONSchema["references"]["links"] = model_card.JSONSchema["references"]["links"].concat(matches);
                 }
             }
-            if (id_count == -1 && flag) {
+            if (id_count == 0 && flag) {
                 flag = false;
                 model_card.JSONSchema["modelname"]["title"] = cell['source'][0];
                 model_card.JSONSchema["modelname"]["cell_ids"] = id_count;
@@ -216,6 +215,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
     // id_count = persistentId
     //let code = programbuilder.buildTo("id" + id_count.toString()).text;
     model_card.markdown += notebookMarkdown;
+    printLineDefUse(notebookCode, model_card);
     return [notebookCode, notebookMarkdown, model_card];
 }
 
@@ -321,35 +321,6 @@ function printLineDefUse(code, model_card, markdown_contents){
 }
 
 
-function getHyperparameters(importStatement) {
-    var contents = fs.readFileSync(__dirname + filename, "utf8");
-    var flag = false;
-    var hyperparams = "";
-    for (let line of contents.split("\n")) {
-        //console.log(line);
-        if (line.includes("relevantToOptimizer")) {
-            flag = true;
-        }
-        if (flag) {
-            hyperparams += line;
-        }
-        if (line.includes("],")) {
-            flag = false;
-        }
-    }
-    hyperparams = hyperparams.substr(hyperparams.indexOf('[')+1);
-    hyperparams = hyperparams.split("]")[0];
-    hyperparams = hyperparams.split(",");
-    var parameters = [];
-    for (let s of hyperparams) {
-        s = s.replace(/['"]+/g, "");
-        s = s.trim();
-        if (s) {
-            parameters.push(s);
-        }
-    }
-    return parameters;
-}
 
 
 
@@ -506,10 +477,9 @@ function main() {
     var notebookMarkdown = res[1];
     var MC = res[2];
 
-    generateMarkdown(MC, notebookCode, markdown_contents);
+   // generateMarkdown(MC, notebookCode, markdown_contents);
     //console.log(model_card.line_to_cell)
-    //console.log(model_card);
-    //printModelCard(model_card);
+    console.log(model_card);
     //Stage("datacleaning", model_card);
 
     //printCellsOfStage("preprocessing", model_card);
