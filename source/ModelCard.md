@@ -10,7 +10,11 @@
 ### links ###
 ""
 ### cell_ids ###
-[]
+[2]
+### source ###
+``` 
+undefinedfrom sklearn.datasets import load_iris
+ ```
 ## References ##
 ### source ###
 ``` 
@@ -18,6 +22,13 @@
  ```
 ### cell_ids ###
 []
+## Libraries Used ##
+### lib ###
+{"pandas":[],"numpy":["import numpy as np"],"matplotlib":["import matplotlib.pyplot as plt"],"sklearn":["from sklearn.model_selection import train_test_split","from sklearn.datasets import load_iris","from sklearn.tree import export_graphviz","from sklearn.tree import DecisionTreeClassifier","from sklearn.linear_model import LogisticRegression","from sklearn.linear_model import Perceptron"],"tensorflow":[],"pytorch":[],"OTHER":["from io import StringIO","import pydotplus","from IPython.display import Image"]}
+### info ###
+{"numpy":{"description":"Library numerical computation and N-dimensional arrays, mostly used in preprocessing.","link":"https://pandas.pydata.org/docs/"},"pandas":{"description":"Library for data analysis and manipulation, mostly used in preprocessing to create dataframes.","link":"https://numpy.org/doc/1.19/"},"matplotlib":{"description":"Library to create visualizations of data, mostly used for graphing.","link":"https://matplotlib.org/contents.html"},"sklearn":{"description":"Machine learning framework, built on NumPy, mostly used for model training and evaluation.","link":"https://scikit-learn.org/stable/user_guide.html"},"tensorflow":{"description":"Machine learning framework based on tensors, mostly used for model training and evaluation.","link":"https://www.tensorflow.org/api_docs"},"pytorch":{"description":"Machine learning frameork based on tensors, mostly used for model trainng and evaluation.","link":"https://pytorch.org/docs/stable/index.html"},"OTHER":{"description":""}}
+### cell_ids ###
+[2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,9,11,14]
 ## Hyperparameters ##
 ### cell_ids ###
 [11]
@@ -28,7 +39,9 @@
 from sklearn.linear_model import LogisticRegression
  ```
 ### values ###
-["penalty","dual","tol","C","fit_intercept","class_weight","solver","multi_class"]
+[]
+### description ###
+{"from sklearn.linear_model import logisticregression":"undefined        'solver': {\r\n          'description': \"\"\"Algorithm for optimization problem.\r\n\r\n- For small datasets, 'liblinear' is a good choice, whereas 'sag' and\r\n  'saga' are faster for large ones.\r\n- For multiclass problems, only 'newton-cg', 'sag', 'saga' and 'lbfgs'\r\n  handle multinomial loss; 'liblinear' is limited to one-versus-rest\r\n  schemes.\r\n- 'newton-cg', 'lbfgs', 'sag' and 'saga' handle L2 or no penalty\r\n- 'liblinear' and 'saga' also handle L1 penalty\r\n- 'saga' also supports 'elasticnet' penalty\r\n- 'liblinear' does not support setting penalty='none'\r\nNote that 'sag' and 'saga' fast convergence is only guaranteed on\r\nfeatures with approximately the same scale. You can\r\npreprocess the data with a scaler from sklearn.preprocessing.\"\"\",\r\n          'enum': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],\r\n          'default': 'liblinear'},\r\n        'penalty': {\r\n          'description': \"\"\"Norm used in the penalization.  \r\nThe 'newton-cg', 'sag' and 'lbfgs' solvers support only l2 penalties. 'elasticnet' is\r\nonly supported by the 'saga' solver. If 'none' (not supported by the\r\nliblinear solver), no regularization is applied.\"\"\",\r\n          'enum': ['l1', 'l2'],\r\n          'default': 'l2'},\r\n        'dual': {\r\n          'description': \"\"\"Dual or primal formulation. \r\nDual formulation is only implemented for l2 penalty with liblinear solver. Prefer dual=False when n_samples > n_features.\"\"\",\r\n          'type': 'boolean',\r\n          'default': False},\r\n        'C': {\r\n          'description':\r\n            'Inverse regularization strength. Smaller values specify '\r\n            'stronger regularization.',\r\n          'type': 'number',\r\n          'distribution': 'loguniform',\r\n          'minimum': 0.0,\r\n          'exclusiveMinimum': True,\r\n          'default': 1.0,\r\n          'minimumForOptimizer': 0.03125,\r\n          'maximumForOptimizer': 32768},\r\n        'tol': {\r\n          'description': 'Tolerance for stopping criteria.',\r\n          'type': 'number',\r\n          'distribution': 'loguniform',\r\n          'minimum': 0.0,\r\n          'exclusiveMinimum': True,\r\n          'default': 0.0001,\r\n          'minimumForOptimizer': 1e-05,\r\n          'maximumForOptimizer': 0.1},\r\n        'fit_intercept': {\r\n          'description':\r\n            'Specifies whether a constant (bias or intercept) should be '\r\n            'added to the decision function.',\r\n          'type': 'boolean',\r\n          'default': True},\r\n        'class_weight': {\r\n          'anyOf': [\r\n            { 'description': 'By default, all classes have weight 1.',\r\n              'enum': [None]},\r\n            { 'description': \"\"\"Uses the values of y to automatically adjust weights inversely \r\nproportional to class frequencies in the input data as \"n_samples / (n_classes * np.bincount(y))\".\"\"\",\r\n              'enum': ['balanced']},\r\n            { 'description': 'Weights associated with classes in the form \"{class_label: weight}\".',\r\n              'type': 'object',\r\n              'additionalProperties': {'type': 'number'},\r\n              'forOptimizer': False}],\r\n        'multi_class': {\r\n          'description':\"\"\"Approach for handling a multi-class problem.\r\nIf the option chosen is 'ovr', then a binary problem is fit for each\r\nlabel. For 'multinomial' the loss minimised is the multinomial loss fit\r\nacross the entire probability distribution, *even when the data is\r\nbinary*. 'multinomial' is unavailable when solver='liblinear'.\r\n'auto' selects 'ovr' if the data is binary, or if solver='liblinear',\r\nand otherwise selects 'multinomial'.\"\"\",\r\n          'enum': ['ovr', 'multinomial', 'auto'],\r\n          'default': 'ovr'},\r\nset to 'liblinear' regardless of whether 'multi_class' is specified or\r\n              'solver': {'not': {'enum': ['newton-cg', 'sag', 'lbfgs']}}}},\r\n            'properties': {'penalty': {'enum': ['l2']}}}]},\r\n            'properties': {'dual': {'enum': [False]}}},\r\n              'penalty': {'enum': ['l2']},\r\n              'solver': {'enum': ['liblinear']}}}]},\r\n              'multi_class': {'not': {'enum': ['multinomial']}}}},\r\n              'solver': {'not': {'enum': ['liblinear']}}}}]}]}\r\n"}
 ## Miscellaneous ##
 ### cell_ids ###
 [1,2]

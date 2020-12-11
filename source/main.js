@@ -4,7 +4,7 @@ exports.__esModule = true;
 /**
  * @TODO
  * Merge Code into Sixian's Repo
- * Hyperparameters -> call POST/GET statement from json formatter with the lale hyperparameter libraries and parse that json
+ * ### LInk to relevant sklearn documentation/pull hyperparameter descriptions from lale
  * **/
 
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
@@ -31,7 +31,7 @@ class ModelCard {
             datasets: {title: "Datasets", description:"", links:"", cell_ids:[]},
             references: {title:"References", source:"", links:[], cell_ids:[]},
             libraries:{title:"Libraries Used", lib:{}, info:{}, cell_ids:[]},
-            hyperparameters:{title:"Hyperparameters", cell_ids:[], lineNumbers:[], source:"", values:[]},
+            hyperparameters:{title:"Hyperparameters", cell_ids:[], lineNumbers:[], source:"", values:[], description:""},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
             datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
@@ -117,13 +117,13 @@ function convertColorToLabel(filePath) {
         schemas[newname] = file;
     });
     model_card.hyperparamschemas = schemas;
-    console.log(schemas);
+    //console.log(schemas);
 
     return new_color_map;
 }
 
 
-function readCells(filePath, new_color_map, markdown_contents) {
+function readCells(filePath, new_color_map) {
     // ## Section  in Markdown
     var content = fs.readFileSync(path.resolve(__dirname, filePath));
     let jsondata = JSON.parse(content);
@@ -220,7 +220,7 @@ function readCells(filePath, new_color_map, markdown_contents) {
 }
 
 
-function printLineDefUse(code, model_card, markdown_contents){
+function printLineDefUse(code, model_card){
     let tree = py.parse(code);
     let cfg = new py.ControlFlowGraph(tree);
     const analyzer = new py.DataflowAnalyzer();
@@ -253,15 +253,35 @@ function printLineDefUse(code, model_card, markdown_contents){
             //Check Hyperparameters
             var input = fromNode[0].toLowerCase();
             var match = "";
+            var hyperparam_descriptions = {};
 
             Object.keys(model_card.hyperparamschemas).forEach(function(key) {
                 if (input.includes(key)) {
                     console.log("MATCH!");
                     var hcontents = fs.readFileSync(__dirname + "/../lib/lale/sklearn/" + model_card.hyperparamschemas[key], "utf8");
                     var hflag = false;
+                    var pflag = false;
+                    var hyperflag = false
                     var hyperparams = "";
+                    var hproperties = "";
+                    var openbrackets = 0;
+
                     for (let hline of hcontents.split("\n")) {
-                        //console.log(line);
+                        if (hline.includes("_hyperparams_schema =")) {
+                            hyperflag = true;
+                        }
+                        if (hyperflag) {
+                            if (hline.includes("'properties':")) {
+                                //console.log(hline);
+                                pflag = true;
+                            }
+                            openbrackets += (hline.match(/{/g)||[]).length
+                            openbrackets -= (hline.match(/}/g)||[]).length
+                            //console.log(line);
+                            //console.log(brackets);
+                            //console.log();
+                        }
+
                         if (hline.includes("relevantToOptimizer")) {
                             hflag = true;
                         }
@@ -271,7 +291,15 @@ function printLineDefUse(code, model_card, markdown_contents){
                         if (hline.includes("],")) {
                             hflag = false;
                         }
+                        if (pflag == true && hyperflag == true) {
+                            hproperties = hproperties + hline + "\n";
+                        }
+                        if (hyperflag && openbrackets == 0) {
+                            break;
+                        }
                     }
+                    //console.log(hproperties);
+
                     hyperparams = hyperparams.substr(hyperparams.indexOf('[')+1);
                     hyperparams = hyperparams.split("]")[0];
                     hyperparams = hyperparams.split(",");
@@ -283,17 +311,68 @@ function printLineDefUse(code, model_card, markdown_contents){
                             parameters.push(s);
                         }
                     }
-                    model_card.JSONSchema["hyperparameters"]["values"] = parameters;
+
+                    pflag = false;
+                    openbrackets=0;
+                    var desc = "";
+                    var substring = null;
+                    var param = "";
+
+                    function containsAny(str, substrings) {
+                        for (var i = 0; i != substrings.length; i++) {
+                            var substring = "'" + substrings[i] + "'";
+                            if (str.indexOf(substring) != - 1) {
+                                return substring;
+                            }
+                        }
+                        return null;
+                    }
+
+
+                    for (let line of hproperties.split("\n")) {
+                        if (!pflag) {
+                            substring = containsAny(line, parameters);
+                            if (substring != null) {
+                                //parameters.some(function(v) {hyperparam_descriptions["'" + v + "'"] = ""; return line.indexOf("'" + v + "'") >= 0; })
+                                pflag = true;
+                                param = substring;
+                            }
+                        }
+                        if (pflag) {
+                            if (line.includes("{")) {
+                                openbrackets += 1;
+                            }
+                            if (line.includes("}")) {
+                                openbrackets -=1;
+                            }
+                            desc = desc + line + "\n";
+
+                            if (openbrackets <= 0) {
+                                pflag = false;
+                                //console.log(desc);
+                                //console.log("#####")
+                                hyperparam_descriptions[input] += desc;
+                                //console.log(desc);
+                                desc = "";
+                            }
+
+                        }
+                    }
+
+                    //console.log(hyperparam_descriptions);
+
+
+                    model_card.JSONSchema["hyperparameters"]["values"].concat(parameters);
                     model_card.JSONSchema["hyperparameters"]["lineNumbers"].push(flow.fromNode.location.first_line);
                     model_card.JSONSchema["hyperparameters"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
                     model_card.JSONSchema["hyperparameters"]["source"] += fromNode[0];
+                    model_card.JSONSchema["hyperparameters"]["description"] = hyperparam_descriptions;
                 }
             });
 
-
-
             importScope[flow.fromNode.location.first_line] = -1;
             model_card.JSONSchema["libraries"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
+
         } else if (flow.fromNode.type === "def") {
             if (flow.fromNode.location.first_line in pLines) {
                 model_card.JSONSchema["plotting"]["functions"].push(py.printNode(flow.fromNode));
@@ -316,7 +395,7 @@ function printLineDefUse(code, model_card, markdown_contents){
     for (let flow of flows.items) {
         numgraph.addEdge(flow.fromNode.location.first_line, flow.toNode.location.first_line);
     }
-    findImportScope(importScope, lineToCode, numgraph, model_card, markdown_contents);
+    findImportScope(importScope, lineToCode, numgraph, model_card);
 
 }
 
@@ -324,7 +403,7 @@ function printLineDefUse(code, model_card, markdown_contents){
 
 
 
-function findImportScope(importScope, lineToCode, numgraph, model_card, markdown_contents) {
+function findImportScope(importScope, lineToCode, numgraph, model_card) {
     var importCode = Object.keys(importScope);
     var scopes = {};
     var imports = {};
@@ -348,13 +427,11 @@ function findImportScope(importScope, lineToCode, numgraph, model_card, markdown
 
     }
     //console.log(model_card.JSONSchema["preprocessing"]["imports"]);
-    generateLibraryInfo(imports, markdown_contents);
+    generateLibraryInfo(imports);
 }
 
-function generateLibraryInfo(imports, markdown_contents) {
+function generateLibraryInfo(imports) {
     let library_defs = JSON.parse(fs.readFileSync(__dirname + "/../assets/library_defs.json"));
-    //console.log("## Libraries Used ##");
-    markdown_contents += "## Libraries Used ##" + "\n";
     var libraries = {"pandas":[], "numpy":[], "matplotlib":[], "sklearn":[], "tensorflow":[], "pytorch":[], "OTHER":[]};
 
     for (let im of Object.keys(imports)) {
@@ -410,46 +487,47 @@ function printModelCard(model_card) {
 }
 
 
-function generateMarkdown(model_card, notebookCode, markdown_contents) {
-
+function generateMarkdown(model_card, notebookCode) {
+    var markdown_contents = "";
     var keys = Object.keys( model_card.JSONSchema );
 
     for( var i = 0,length = keys.length; i < length; i++ ) {
-        if (keys[i] == 'libraries') {
-            printLineDefUse(notebookCode, model_card);
-        } else {
-            var stageKeys = Object.keys(model_card.JSONSchema[keys[i]]);
-            for (let stageKey of stageKeys) {
-                if (stageKey == 'title') {
-                    markdown_contents += "## " + model_card.JSONSchema[keys[i]][stageKey] + " ##" + "\n";
-                } else {
-                    if (stageKey == 'source') {
-                        markdown_contents += "### " + stageKey + " ###" + "\n";
-                        markdown_contents += "``` " + "\n" + model_card.JSONSchema[keys[i]][stageKey] + "\n" + " ```" + "\n";
+        var stageKeys = Object.keys(model_card.JSONSchema[keys[i]]);
+        for (let stageKey of stageKeys) {
+            if (stageKey == 'title') {
+                markdown_contents += "## " + model_card.JSONSchema[keys[i]][stageKey] + " ##" + "\n";
+            } else {
+                if (stageKey == 'source') {
+                    markdown_contents += "### " + stageKey + " ###" + "\n";
+                    markdown_contents += "``` " + "\n" + model_card.JSONSchema[keys[i]][stageKey] + "\n" + " ```" + "\n";
 
-                    } else if (stageKey == "outputs") {
-                        markdown_contents += "### " + stageKey + " ###" + "\n";
-                        markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
-                        //var image = document.createElement('img');
-                        //image.src = "data:image/png;base64," + base64JsonData;
+                }else if (stageKey == "description" && keys[i] == "hyperparameters") {
+                    console.log("HERE");
+                    markdown_contents += "### " + stageKey + " ###" + "\n";
+                    markdown_contents += JSON.stringify(model_card.JSONSchema[keys[i]][stageKey]) + "\n";
 
-                    } else if (stageKey == "imports" || stageKey == "markdown") {
-                        continue;
-                    } else if (stageKey == "figures") {
-                        markdown_contents += "### " + stageKey + " ###" + "\n";
-                        for (let image of model_card.JSONSchema[keys[i]][stageKey]) {
-                            //![id5](./image/id5.jpg)
-                            markdown_contents += "![" + image + "](" + "../example/" +
-                                model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
-                        }
-                    } else if (keys[i] == "references" && stageKey == "links") {
-                        for (let link of model_card.JSONSchema['references']['links']) {
-                            markdown_contents += link + "\n";
-                        }
-                    }else {
-                        markdown_contents += "### " + stageKey + " ###" + "\n";
-                        markdown_contents += JSON.stringify(model_card.JSONSchema[keys[i]][stageKey]) + "\n";
+                }else if (stageKey == "outputs") {
+                    markdown_contents += "### " + stageKey + " ###" + "\n";
+                    markdown_contents += model_card.JSONSchema[keys[i]][stageKey] + "\n";
+                    //var image = document.createElement('img');
+                    //image.src = "data:image/png;base64," + base64JsonData;
+
+                } else if (stageKey == "imports" || stageKey == "markdown") {
+                    continue;
+                } else if (stageKey == "figures") {
+                    markdown_contents += "### " + stageKey + " ###" + "\n";
+                    for (let image of model_card.JSONSchema[keys[i]][stageKey]) {
+                        //![id5](./image/id5.jpg)
+                        markdown_contents += "![" + image + "](" + "../example/" +
+                            model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
                     }
+                } else if (keys[i] == "references" && stageKey == "links") {
+                    for (let link of model_card.JSONSchema['references']['links']) {
+                        markdown_contents += link + "\n";
+                    }
+                }else {
+                    markdown_contents += "### " + stageKey + " ###" + "\n";
+                    markdown_contents += JSON.stringify(model_card.JSONSchema[keys[i]][stageKey]) + "\n";
                 }
             }
         }
@@ -467,19 +545,15 @@ function generateMarkdown(model_card, notebookCode, markdown_contents) {
 
 
 function main() {
-    //generateModelName(notebookMarkdown);
-    //generateMarkdown(model_card);
-
-    var markdown_contents = "";
     var new_color = convertColorToLabel(filePath);
     var res = readCells(filePath, new_color);
     var notebookCode = res[0];
     var notebookMarkdown = res[1];
     var MC = res[2];
 
-   // generateMarkdown(MC, notebookCode, markdown_contents);
+    generateMarkdown(MC, notebookCode);
     //console.log(model_card.line_to_cell)
-    console.log(model_card);
+    //console.log(model_card);
     //Stage("datacleaning", model_card);
 
     //printCellsOfStage("preprocessing", model_card);
