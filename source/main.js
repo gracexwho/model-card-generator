@@ -31,7 +31,7 @@ class ModelCard {
             datasets: {title: "Datasets", description:"", links:"", cell_ids:[]},
             references: {title:"References", source:"", links:[], cell_ids:[]},
             libraries:{title:"Libraries Used", lib:{}, info:{}, cell_ids:[]},
-            hyperparameters:{title:"Hyperparameters", cell_ids:[], lineNumbers:[], source:"", values:[], description:""},
+            hyperparameters:{title:"Hyperparameters", cell_ids:[], lineNumbers:[], source:"", values:"", description:""},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
             datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
@@ -136,7 +136,7 @@ function readCells(filePath, new_color_map) {
     let programbuilder = new py.ProgramBuilder();
     model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1).toString();
     console.log();
-    fs.mkdirSync("../example/" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
+    //fs.mkdirSync("../assets/model_cards" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
 
     for (let cell of jsondata['cells']) {
         let sourceCode = "";
@@ -194,8 +194,8 @@ function readCells(filePath, new_color_map) {
                     //model_card.outputs[code_cell.persistentId] += output;
                     if (cell["outputs"][output]['output_type'] == 'display_data') {
                         var bitmap = new Buffer.from(cell["outputs"][output]['data']['image/png'], 'base64');
-                        fs.writeFileSync(__dirname + "/../example/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + code_cell.persistentId + ".jpg", bitmap);
-                        var image = "![Hello World](data:image/png;base64," + cell["outputs"][output]['data']['image/png'];
+                        //fs.writeFileSync(__dirname + "/../assets/model_cards/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + code_cell.persistentId + ".jpg", bitmap);
+                        var image = "![Hello World](data:image/png;base64," + cell["outputs"][output]['data']['image/png'] + ")";
                         model_card.JSONSchema[currStage]["figures"].push(code_cell.persistentId + ".jpg");
                     } else if (cell["outputs"][output]['output_type'] == 'stream') {
                         var info = cell["outputs"][output]["text"];
@@ -361,7 +361,7 @@ function printLineDefUse(code, model_card){
                     //console.log(hyperparam_descriptions);
 
 
-                    model_card.JSONSchema["hyperparameters"]["values"].concat(parameters);
+                    model_card.JSONSchema["hyperparameters"]["values"] += parameters;
                     model_card.JSONSchema["hyperparameters"]["lineNumbers"].push(flow.fromNode.location.first_line);
                     model_card.JSONSchema["hyperparameters"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
                     model_card.JSONSchema["hyperparameters"]["source"] += fromNode[0];
@@ -516,8 +516,7 @@ function generateMarkdown(model_card, notebookname="") {
                     markdown_contents += "### " + stageKey + " ###" + "\n";
                     for (let image of model_card.JSONSchema[keys[i]][stageKey]) {
                         //![id5](./image/id5.jpg)
-                        markdown_contents += "![" + image + "](" + "../example/" +
-                            model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
+                        //markdown_contents += "![" + image + "](" + "../assets/model_cards/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
                     }
                 } else if (keys[i] == "references" && stageKey == "links") {
                     for (let link of model_card.JSONSchema['references']['links']) {

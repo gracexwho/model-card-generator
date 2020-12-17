@@ -39,7 +39,7 @@ undefinedfrom sklearn.datasets import fetch_lfw_people
 from sklearn.decomposition import PCAfrom sklearn.svm import SVC
  ```
 ### values ###
-[]
+"n_components,whiten,svd_solverkernel,degree,gamma,shrinking,probability,tol"
 ### description ###
 {"from sklearn.svm import svc":"undefined            'kernel': {\r\n                'anyOf': [\r\n                {   'enum':['precomputed'], 'forOptimizer': False}, \r\n                {   'enum': ['linear', 'poly', 'rbf', 'sigmoid']},\r\n                {   'laleType': 'callable', 'forOptimizer': False}],\r\n                'default': 'rbf',\r\n                'description':\r\n                    'Specifies the kernel type to be used in the algorithm.'},\r\n            'degree': {\r\n                'type': 'integer',\r\n                'minimum': 0,\r\n                'minimumForOptimizer': 2,\r\n                'maximumForOptimizer': 5,\r\n                'default': 3,\r\n                'description': \"Degree of the polynomial kernel function ('poly').\"},\r\n            'gamma': {\r\n                'anyOf': [\r\n                {   'type': 'number',\r\n                    'minimum': 0.0,\r\n                    'exclusiveMinimum': True,\r\n                    'minimumForOptimizer': 3.0517578125e-05,\r\n                    'maximumForOptimizer': 8,\r\n                    'distribution': 'loguniform'},\r\n                {   'enum': ['auto', 'auto_deprecated', 'scale']}],\r\n                'default': 'auto_deprecated', #going to change to 'scale' from sklearn 0.22.\r\n                'description': \"Kernel coefficient for 'rbf', 'poly', and 'sigmoid'.\"},\r\n            'shrinking': {\r\n                'type': 'boolean',\r\n                'default': True,\r\n                'description': 'Whether to use the shrinking heuristic.'},\r\n            'probability': {\r\n                'type': 'boolean',\r\n                'default': False,\r\n                'description': 'Whether to enable probability estimates.'},\r\n            'tol': {\r\n                'type': 'number',\r\n                'distribution': 'loguniform',\r\n                'minimum': 0.0,\r\n                'exclusiveMinimum': True,\r\n                'maximumForOptimizer': 0.01,\r\n                'default': 0.0001,\r\n                'description': 'Tolerance for stopping criteria.'},\r\n            'properties': {'kernel': {'enum': ['poly', 'sigmoid']}}},\r\n"}
 ## Miscellaneous ##
@@ -117,8 +117,6 @@ plot_gallery(X, target_names[y], h, w)
 ### functions ###
 ["def plot_gallery(images, titles, h, w, n_row, n_col):\"Helper function to plot a gallery of portraits\"\nplt.figure(figsize=((1.8*n_col), (2.4*n_row)))\nplt.subplots_adjust(bottom=0,left=0.01,right=0.99,top=0.9,hspace=0.35)\n    for i in range((n_row*n_col)):plt.subplot(n_row,n_col,(i+1))\nplt.imshow(images[i].reshape((h, w)),cmap=plt.cm.gray)\nplt.title(titles[i],size=12)\nplt.xticks(())\nplt.yticks(())","def plot_gallery(images, titles, h, w, n_row, n_col):\"Helper function to plot a gallery of portraits\"\nplt.figure(figsize=((1.8*n_col), (2.4*n_row)))\nplt.subplots_adjust(bottom=0,left=0.01,right=0.99,top=0.9,hspace=0.35)\n    for i in range((n_row*n_col)):plt.subplot(n_row,n_col,(i+1))\nplt.imshow(images[i].reshape((h, w)),cmap=plt.cm.gray)\nplt.title(titles[i],size=12)\nplt.xticks(())\nplt.yticks(())","def plot_gallery(images, titles, h, w, n_row, n_col):\"Helper function to plot a gallery of portraits\"\nplt.figure(figsize=((1.8*n_col), (2.4*n_row)))\nplt.subplots_adjust(bottom=0,left=0.01,right=0.99,top=0.9,hspace=0.35)\n    for i in range((n_row*n_col)):plt.subplot(n_row,n_col,(i+1))\nplt.imshow(images[i].reshape((h, w)),cmap=plt.cm.gray)\nplt.title(titles[i],size=12)\nplt.xticks(())\nplt.yticks(())","def plot_gallery(images, titles, h, w, n_row, n_col):\"Helper function to plot a gallery of portraits\"\nplt.figure(figsize=((1.8*n_col), (2.4*n_row)))\nplt.subplots_adjust(bottom=0,left=0.01,right=0.99,top=0.9,hspace=0.35)\n    for i in range((n_row*n_col)):plt.subplot(n_row,n_col,(i+1))\nplt.imshow(images[i].reshape((h, w)),cmap=plt.cm.gray)\nplt.title(titles[i],size=12)\nplt.xticks(())\nplt.yticks(())","def plot_gallery(images, titles, h, w, n_row, n_col):\"Helper function to plot a gallery of portraits\"\nplt.figure(figsize=((1.8*n_col), (2.4*n_row)))\nplt.subplots_adjust(bottom=0,left=0.01,right=0.99,top=0.9,hspace=0.35)\n    for i in range((n_row*n_col)):plt.subplot(n_row,n_col,(i+1))\nplt.imshow(images[i].reshape((h, w)),cmap=plt.cm.gray)\nplt.title(titles[i],size=12)\nplt.xticks(())\nplt.yticks(())"]
 ### figures ###
-![id1.jpg](../example/Face_recognition.ipynb/id1.jpg)
-![id4.jpg](../example/Face_recognition.ipynb/id4.jpg)
 ### description ###
 ""
 ### outputs ###
@@ -164,9 +162,6 @@ plot_gallery(X_train_reconstructed, target_names[y_train], h, w, n_row=1)plot_ga
 ### functions ###
 []
 ### figures ###
-![id6.jpg](../example/Face_recognition.ipynb/id6.jpg)
-![id8.jpg](../example/Face_recognition.ipynb/id8.jpg)
-![id9.jpg](../example/Face_recognition.ipynb/id9.jpg)
 ### description ###
 ""
 ### outputs ###
@@ -263,7 +258,6 @@ print(confusion_matrix(y_test, y_pred, labels=range(n_classes)))
 ### functions ###
 []
 ### figures ###
-![id11.jpg](../example/Face_recognition.ipynb/id11.jpg)
 ### description ###
 ""
 ### outputs ###
