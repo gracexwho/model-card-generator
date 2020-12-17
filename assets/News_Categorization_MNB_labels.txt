@@ -1,0 +1,31 @@
+3->Data collection
+3->Model deployment
+5->Data collection
+6->Plotting
+11->Feature Engineering
+11->Feature Engineering
+11->Training
+11->Evaluation
+11->Evaluation
+12->Evaluation
+13->Evaluation
+14->Evaluation
+15->Evaluation
+15->Data cleaning
+16->Evaluation
+16->Plotting
+16->Plotting
+16->Plotting
+16->Plotting
+16->Plotting
+16->Plotting
+16->Model deployment
+16->Plotting
+16->Plotting
+16->Plotting
+16->Plotting
+16->Plotting
+16->Plotting
+17->Evaluation
+18->Data collection
+19->Evaluation

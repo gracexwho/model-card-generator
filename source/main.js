@@ -96,7 +96,7 @@ function convertColorToLabel(filePath) {
     fs.writeFile((__dirname + "/../assets/" + filePath.split(".ipynb")[0] + '_labels.txt'), color_map,
         function (err) {
             if (err) throw err;
-            console.log('Labels file saved!');
+            //console.log('Labels file saved!');
         });
 
     color_map = color_map.split("\n");
@@ -257,7 +257,6 @@ function printLineDefUse(code, model_card){
 
             Object.keys(model_card.hyperparamschemas).forEach(function(key) {
                 if (input.includes(key)) {
-                    console.log("MATCH!");
                     var hcontents = fs.readFileSync(__dirname + "/../lib/lale/sklearn/" + model_card.hyperparamschemas[key], "utf8");
                     var hflag = false;
                     var pflag = false;
@@ -487,7 +486,7 @@ function printModelCard(model_card) {
 }
 
 
-function generateMarkdown(model_card, notebookCode) {
+function generateMarkdown(model_card, notebookname="") {
     var markdown_contents = "";
     var keys = Object.keys( model_card.JSONSchema );
 
@@ -502,7 +501,6 @@ function generateMarkdown(model_card, notebookCode) {
                     markdown_contents += "``` " + "\n" + model_card.JSONSchema[keys[i]][stageKey] + "\n" + " ```" + "\n";
 
                 }else if (stageKey == "description" && keys[i] == "hyperparameters") {
-                    console.log("HERE");
                     markdown_contents += "### " + stageKey + " ###" + "\n";
                     markdown_contents += JSON.stringify(model_card.JSONSchema[keys[i]][stageKey]) + "\n";
 
@@ -535,30 +533,54 @@ function generateMarkdown(model_card, notebookCode) {
 
     }
     //console.log(markdown_contents);
-    fs.writeFile('ModelCard.md', markdown_contents, (err) => {
+    fs.writeFile('../assets/model_cards/' + 'ModelCard' + notebookname + '.md', markdown_contents, (err) => {
         if (err) throw err;
-        console.log('Model card saved!');
+        //console.log('Model card saved!');
         //console.log(model_card);
     });
 
 }
 
+function getExt(filename){
+    return filename.substring(filename.lastIndexOf('.')+1, filename.length);
+}
+
+
+function bulk_run() {
+    var fpath = "../assets/"
+    fs.readdirSync(fpath).forEach(file => {
+        var filePath = "";
+        if (getExt(file) === "ipynb"){
+            console.log('Currently processing:');
+            console.log(fpath + file + '\n');
+            filePath = fpath + file;
+
+            var new_color = convertColorToLabel(filePath);
+            var res = readCells(filePath, new_color);
+            var notebookCode = res[0];
+            var notebookMarkdown = res[1];
+            var MC = res[2];
+
+            generateMarkdown(MC, "_" + file.split(".")[0]);
+
+        }
+
+    });
+}
 
 function main() {
-    var new_color = convertColorToLabel(filePath);
-    var res = readCells(filePath, new_color);
-    var notebookCode = res[0];
-    var notebookMarkdown = res[1];
-    var MC = res[2];
+    bulk_run()
 
-    generateMarkdown(MC, notebookCode);
-    //console.log(model_card.line_to_cell)
-    //console.log(model_card);
-    //Stage("datacleaning", model_card);
+    /**
+     *
+     var new_color = convertColorToLabel(filePath);
+     var res = readCells(filePath, new_color);
+     var notebookCode = res[0];
+     var notebookMarkdown = res[1];
+     var MC = res[2];
 
-    //printCellsOfStage("preprocessing", model_card);
-    //printCellsOfStage("modeltraining", model_card);
-    //printCellsOfStage("modelevaluation", model_card);
+     generateMarkdown(MC, notebookCode);
+     */
 
 }
 
