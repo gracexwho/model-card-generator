@@ -20,7 +20,6 @@ var dep = require("./cell_deps.js");
 
 var args = process.argv.slice(2);
 var filePath = args[0];
-var countLines = 0;
 
 
 class ModelCard {
@@ -31,7 +30,7 @@ class ModelCard {
             datasets: {title: "Datasets", description:"", links:"", cell_ids:[]},
             references: {title:"References", source:"", links:[], cell_ids:[]},
             libraries:{title:"Libraries Used", lib:{}, info:{}, cell_ids:[]},
-            hyperparameters:{title:"Hyperparameters", cell_ids:[], lineNumbers:[], source:"", values:"", description:""},
+            hyperparameters:{title:"Hyperparameters", cell_ids:[], lineNumbers:[], source:"", values:[], description:""},
             misc:{title:"Miscellaneous", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
             plotting:{title:"Plotting", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
             datacleaning:{title:"Data Cleaning", cell_ids:[], cells:[], lineNumbers:[], source:"", markdown:"", imports:[], functions:[], figures:[], description:"", outputs:[]},
@@ -80,6 +79,7 @@ function convertColorToLabel(filePath) {
     // training -> purple
     // evaluation -> orange
     // model deployment -> pink
+    model_card = new ModelCard();
 
     var color_map = dep.printLabels(filePath);
 
@@ -135,7 +135,7 @@ function readCells(filePath, new_color_map) {
     let flag = true;
     let programbuilder = new py.ProgramBuilder();
     model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1).toString();
-    console.log();
+    var countLines = 0;
     //fs.mkdirSync("../assets/model_cards" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
 
     for (let cell of jsondata['cells']) {
@@ -215,12 +215,12 @@ function readCells(filePath, new_color_map) {
     // id_count = persistentId
     //let code = programbuilder.buildTo("id" + id_count.toString()).text;
     model_card.markdown += notebookMarkdown;
-    printLineDefUse(notebookCode, model_card);
+    printLineDefUse(notebookCode, model_card, countLines);
     return [notebookCode, notebookMarkdown, model_card];
 }
 
 
-function printLineDefUse(code, model_card){
+function printLineDefUse(code, model_card, countLines){
     let tree = py.parse(code);
     let cfg = new py.ControlFlowGraph(tree);
     const analyzer = new py.DataflowAnalyzer();
@@ -357,18 +357,13 @@ function printLineDefUse(code, model_card){
 
                         }
                     }
-
-                    //console.log(hyperparam_descriptions);
-
-
                     model_card.JSONSchema["hyperparameters"]["values"] += parameters;
                     model_card.JSONSchema["hyperparameters"]["lineNumbers"].push(flow.fromNode.location.first_line);
                     model_card.JSONSchema["hyperparameters"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
-                    model_card.JSONSchema["hyperparameters"]["source"] += fromNode[0];
+                    model_card.JSONSchema["hyperparameters"]["source"] += fromNode[0] + "\n";
                     model_card.JSONSchema["hyperparameters"]["description"] = hyperparam_descriptions;
                 }
             });
-
             importScope[flow.fromNode.location.first_line] = -1;
             model_card.JSONSchema["libraries"]["cell_ids"].push(model_card.line_to_cell[flow.fromNode.location.first_line]);
 
@@ -554,14 +549,17 @@ function bulk_run() {
             console.log(fpath + file + '\n');
             filePath = fpath + file;
 
-            var new_color = convertColorToLabel(filePath);
-            var res = readCells(filePath, new_color);
-            var notebookCode = res[0];
-            var notebookMarkdown = res[1];
-            var MC = res[2];
+            try {
+                var new_color = convertColorToLabel(filePath);
+                var res = readCells(filePath, new_color);
+                var notebookCode = res[0];
+                var notebookMarkdown = res[1];
+                var MC = res[2];
 
-            generateMarkdown(MC, "_" + file.split(".")[0]);
-
+                generateMarkdown(MC, "_" + file.split(".")[0]);
+            } catch(err) {
+                console.log(err);
+            }
         }
 
     });
