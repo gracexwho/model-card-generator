@@ -5,8 +5,10 @@ https://www.npmjs.com/package/@gracexwho/model-card-generator
 
 ## Requisites
 1. Make sure you have Python & pip & NodeJS installed
-2. pip install graphviz
+2. ```pip install graphviz```
 3. [Install GraphViz to your computer here](https://graphviz.org/download/)
+4. ```npm i modified-python-program-analysis```
+
 This repository builds on top of [python-program-analysis](https://github.com/andrewhead/python-program-analysis) and [jupyter-cmu-project](https://github.com/yjiang2cmu/Jupyter-Notebook-Project)
 
 ## Installation
