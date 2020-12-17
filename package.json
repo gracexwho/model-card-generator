@@ -1,6 +1,6 @@
 {
   "name": "@gracexwho/model-card-generator",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Tool for generating model cards for Jupyter Notebook.",
   "main": "source/main.js",
   "scripts": {
