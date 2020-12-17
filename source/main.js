@@ -1,15 +1,13 @@
 "use strict";
 exports.__esModule = true;
 
-/**
- * @TODO
- * Merge Code into Sixian's Repo
- * ### LInk to relevant sklearn documentation/pull hyperparameter descriptions from lale
- * **/
-
 // COMMAND: node main.js ../assets/News_Categorization_MNB.ipynb
 
-//var py = require("../lib/python-program-analysis/dist/es5");
+const BULK_RUN_PATH = "../tests/notebooks/";       //const BULK_RUN_PATH = "../assets/"
+const SCHEMAS_PATH = "/../lib/lale/sklearn/";
+const MODEL_CARDS_PATH = "../assets/model_cards/";
+
+
 var graphing = require("./Graph.js").Graph;
 var py = require("modified-python-program-analysis/dist/es5");
 var fs = require('fs');
@@ -83,7 +81,6 @@ function convertColorToLabel(filePath) {
 
     var color_map = dep.printLabels(filePath);
 
-    //var colourFile = fs.readFileSync(path.resolve(__dirname, filePath.split(".ipynb")[0] + "_deps_and_labels_new.txt"), "utf8");
     var mapObj = {red:"Data collection",yellow:"Data cleaning",
         green:"Data labelling", "lightblue":"Plotting", "blue":"Feature Engineering",
         purple:"Training", orange:"Evaluation", pink:"Model deployment"};
@@ -93,11 +90,11 @@ function convertColorToLabel(filePath) {
         return mapObj[matched];
     });
 
-    fs.writeFile((__dirname + "/../assets/" + filePath.split(".ipynb")[0] + '_labels.txt'), color_map,
+    /**fs.writeFile((__dirname + "/../assets/" + filePath.split(".ipynb")[0] + '_labels.txt'), color_map,
         function (err) {
             if (err) throw err;
             //console.log('Labels file saved!');
-        });
+        }); **/
 
     color_map = color_map.split("\n");
     var new_color_map = {};
@@ -107,24 +104,20 @@ function convertColorToLabel(filePath) {
         new_color_map[element[0]] = element[1];
     }
 
-
-    const testFolder = '/../lib/lale/sklearn/';
     var schemas = {};
-    var filenames = fs.readdirSync(__dirname + testFolder);
+    var filenames = fs.readdirSync(__dirname + SCHEMAS_PATH);
     filenames.forEach(file => {
         var newname = file.replace("_", "");
         newname = newname.replace(".py", "");
         schemas[newname] = file;
     });
     model_card.hyperparamschemas = schemas;
-    //console.log(schemas);
 
     return new_color_map;
 }
 
 
 function readCells(filePath, new_color_map) {
-    // ## Section  in Markdown
     var content = fs.readFileSync(path.resolve(__dirname, filePath));
     let jsondata = JSON.parse(content);
     var notebookCode = "\n";
@@ -136,7 +129,7 @@ function readCells(filePath, new_color_map) {
     let programbuilder = new py.ProgramBuilder();
     model_card.JSONSchema["modelname"]["Filename"] = filePath.split("/").slice(-1).toString();
     var countLines = 0;
-    //fs.mkdirSync("../assets/model_cards" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
+    //fs.mkdirSync("../assets/model_cards/" + model_card.JSONSchema["modelname"]["Filename"], { recursive: true })
 
     for (let cell of jsondata['cells']) {
         let sourceCode = "";
@@ -187,14 +180,12 @@ function readCells(filePath, new_color_map) {
             }
             notebookCode += sourceCode + '\n';
             let code_cell = createCell(sourceCode, cell['execution_count'], cell['outputs'][0]);
-            //console.log(ic.printInfoCell(code_cell));
-            //console.log("OUTPUT: ", cell["outputs"]);
+
             if (cell["outputs"].length != 0) {
                 for (let output in cell["outputs"]) {
-                    //model_card.outputs[code_cell.persistentId] += output;
                     if (cell["outputs"][output]['output_type'] == 'display_data') {
                         var bitmap = new Buffer.from(cell["outputs"][output]['data']['image/png'], 'base64');
-                        //fs.writeFileSync(__dirname + "/../assets/model_cards/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + code_cell.persistentId + ".jpg", bitmap);
+                        //fs.writeFileSync(__dirname + MODEL_CARDS_PATH + model_card.JSONSchema["modelname"]["Filename"] + "/" + code_cell.persistentId + ".jpg", bitmap);
                         var image = "![Hello World](data:image/png;base64," + cell["outputs"][output]['data']['image/png'] + ")";
                         model_card.JSONSchema[currStage]["figures"].push(code_cell.persistentId + ".jpg");
                     } else if (cell["outputs"][output]['output_type'] == 'stream') {
@@ -206,14 +197,11 @@ function readCells(filePath, new_color_map) {
 
             programbuilder.add(code_cell)
             model_card.JSONSchema[currStage]["cells"] += code_cell;
-            //console.log(code_cell);
-            //console.log(model_card.JSONSchema[currStage]["cells"]);
             model_card.JSONSchema[currStage]["source"] += sourceCode;
             model_card.JSONSchema[currStage]["cell_ids"].push(id_count);
         }
     }
-    // id_count = persistentId
-    //let code = programbuilder.buildTo("id" + id_count.toString()).text;
+
     model_card.markdown += notebookMarkdown;
     printLineDefUse(notebookCode, model_card, countLines);
     return [notebookCode, notebookMarkdown, model_card];
@@ -271,14 +259,10 @@ function printLineDefUse(code, model_card, countLines){
                         }
                         if (hyperflag) {
                             if (hline.includes("'properties':")) {
-                                //console.log(hline);
                                 pflag = true;
                             }
                             openbrackets += (hline.match(/{/g)||[]).length
                             openbrackets -= (hline.match(/}/g)||[]).length
-                            //console.log(line);
-                            //console.log(brackets);
-                            //console.log();
                         }
 
                         if (hline.includes("relevantToOptimizer")) {
@@ -297,7 +281,6 @@ function printLineDefUse(code, model_card, countLines){
                             break;
                         }
                     }
-                    //console.log(hproperties);
 
                     hyperparams = hyperparams.substr(hyperparams.indexOf('[')+1);
                     hyperparams = hyperparams.split("]")[0];
@@ -348,10 +331,7 @@ function printLineDefUse(code, model_card, countLines){
 
                             if (openbrackets <= 0) {
                                 pflag = false;
-                                //console.log(desc);
-                                //console.log("#####")
                                 hyperparam_descriptions[input] += desc;
-                                //console.log(desc);
                                 desc = "";
                             }
 
@@ -405,8 +385,6 @@ function findImportScope(importScope, lineToCode, numgraph, model_card) {
     for (let lineNum of importCode) {
         var result = numgraph.findLongestPathSrc(numgraph.edge.length, parseInt(lineNum))
         scopes[lineNum] = result[1];
-        //console.log(lineToCode[lineNum]);
-        //console.log("START: ", lineNum.toString(), " END: ", scopes[lineNum]);
         imports[lineToCode[lineNum]] = "START:" + lineNum.toString() + "\t" + " END:" + scopes[lineNum];
 
         if (model_card.getDCLineNumbers().includes(parseInt(lineNum))) {
@@ -420,7 +398,6 @@ function findImportScope(importScope, lineToCode, numgraph, model_card) {
         }
 
     }
-    //console.log(model_card.JSONSchema["preprocessing"]["imports"]);
     generateLibraryInfo(imports);
 }
 
@@ -447,21 +424,6 @@ function generateLibraryInfo(imports) {
     }
     model_card.JSONSchema["libraries"]["lib"] = libraries;
     model_card.JSONSchema["libraries"]["info"] = library_defs;
-    //console.log(library_defs);
-    /**
-    for (let lib of Object.keys(libraries)) {
-        if (libraries[lib].length > 0) {
-            //console.log("### From the library ", lib, " ###");
-            //console.log(library_defs[lib]["description"]);
-            markdown_contents += "#### From the library " + lib + " ####" + "\n";
-            for (let element of libraries[lib]) {
-                markdown_contents += element + "    " + imports[element] + "\n" + "\n";
-            }
-            //libraries[lib].forEach(element => console.log(element, "\t", imports[element]));
-            //console.log("--");
-        }
-    }
-     **/
 
 }
 
@@ -511,7 +473,7 @@ function generateMarkdown(model_card, notebookname="") {
                     markdown_contents += "### " + stageKey + " ###" + "\n";
                     for (let image of model_card.JSONSchema[keys[i]][stageKey]) {
                         //![id5](./image/id5.jpg)
-                        //markdown_contents += "![" + image + "](" + "../assets/model_cards/" + model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
+                        //markdown_contents += "![" + image + "](" + MODEL_CARDS_PATH + model_card.JSONSchema["modelname"]["Filename"] + "/" + image + ")" + "\n";
                     }
                 } else if (keys[i] == "references" && stageKey == "links") {
                     for (let link of model_card.JSONSchema['references']['links']) {
@@ -526,8 +488,8 @@ function generateMarkdown(model_card, notebookname="") {
 
 
     }
-    //console.log(markdown_contents);
-    fs.writeFile('../assets/model_cards/' + 'ModelCard' + notebookname + '.md', markdown_contents, (err) => {
+
+    fs.writeFile(MODEL_CARDS_PATH + "ModelCard" + notebookname + '.md', markdown_contents, (err) => {
         if (err) throw err;
         //console.log('Model card saved!');
         //console.log(model_card);
@@ -541,13 +503,12 @@ function getExt(filename){
 
 
 function bulk_run() {
-    var fpath = "../tests/notebooks"
-    fs.readdirSync(fpath).forEach(file => {
+    fs.readdirSync(BULK_RUN_PATH).forEach(file => {
         var filePath = "";
         if (getExt(file) === "ipynb"){
             console.log('Currently processing:');
-            console.log(fpath + file + '\n');
-            filePath = fpath + file;
+            console.log(BULK_RUN_PATH + file + '\n');
+            filePath = BULK_RUN_PATH + file;
 
             try {
                 var new_color = convertColorToLabel(filePath);
