@@ -36,7 +36,9 @@ undefinedfrom sklearn.datasets import fetch_lfw_people
 [54,77]
 ### source ###
 ``` 
-from sklearn.decomposition import PCAfrom sklearn.svm import SVC
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+
  ```
 ### values ###
 "n_components,whiten,svd_solverkernel,degree,gamma,shrinking,probability,tol"

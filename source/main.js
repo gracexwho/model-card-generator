@@ -541,7 +541,7 @@ function getExt(filename){
 
 
 function bulk_run() {
-    var fpath = "../assets/"
+    var fpath = "../tests/notebooks"
     fs.readdirSync(fpath).forEach(file => {
         var filePath = "";
         if (getExt(file) === "ipynb"){
@@ -566,10 +566,6 @@ function bulk_run() {
 }
 
 function main() {
-    bulk_run()
-
-    /**
-     *
      var new_color = convertColorToLabel(filePath);
      var res = readCells(filePath, new_color);
      var notebookCode = res[0];
@@ -577,12 +573,11 @@ function main() {
      var MC = res[2];
 
      generateMarkdown(MC, notebookCode);
-     */
-
 }
 
 
-main();
+//main();
+bulk_run();
 
 
 

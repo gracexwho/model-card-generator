@@ -79,3 +79,5 @@ fabric.properties
 /test_lale/
 /lib/python-program-analysis/
 /dist/
+/tests/notebooks/
+/tests/

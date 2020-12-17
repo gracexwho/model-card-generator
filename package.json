@@ -1,6 +1,6 @@
 {
   "name": "@gracexwho/model-card-generator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tool for generating model cards for Jupyter Notebook.",
   "main": "source/main.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/mocha": "^7.0.2",
-    "@types/node": "^14.14.10",
+    "@types/node": "^14.14.14",
     "mocha": "^8.2.1",
     "modified-python-program-analysis": "^1.0.0",
     "python-shell": "^2.0.3",
@@ -20,7 +20,7 @@
   "dependencies": {
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
-    "json2md": "^1.9.1"
+    "json2md": "^1.9.2"
   },
   "directories": {
     "example": "example",
