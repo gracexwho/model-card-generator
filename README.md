@@ -1,5 +1,6 @@
 # model-card-generator
 Typescript tool for generating Model Cards for machine learning models.
+https://www.npmjs.com/package/@gracexwho/model-card-generator
 
 ## Requisites
 1. Make sure you have Python & pip & NodeJS installed
