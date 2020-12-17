@@ -537,8 +537,8 @@ function main() {
 }
 
 
-//main();
-bulk_run();
+main();
+//bulk_run();
 
 
 
